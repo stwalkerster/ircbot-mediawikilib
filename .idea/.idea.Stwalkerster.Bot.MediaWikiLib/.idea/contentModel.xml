@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ContentModelStore">
+    <e p="$APPLICATION_CONFIG_DIR$/consoles/db" t="IncludeRecursive" />
+    <e p="$APPLICATION_CONFIG_DIR$/extensions" t="IncludeRecursive" />
+    <e p="$APPLICATION_CONFIG_DIR$/scratches" t="IncludeRecursive" />
+    <e p="$USER_HOME$/.Rider2018.2/system/extResources" t="IncludeRecursive" />
+    <e p="$USER_HOME$/.Rider2018.2/system/resharper-host/local/Transient/ReSharperHost/v182/SolutionCaches/_Stwalkerster.Bot.MediaWikiLib.1591117225.00" t="ExcludeRecursive" />
+    <e p="$PROJECT_DIR$" t="IncludeFlat">
+      <e p="Stwalkerster.Bot.MediaWikiLib" t="IncludeRecursive">
+        <e p="Configuration" t="Include">
+          <e p="IMediaWikiConfiguration.cs" t="Include" />
+        </e>
+        <e p="Properties" t="Include">
+          <e p="AssemblyInfo.cs" t="Include" />
+        </e>
+        <e p="Services" t="Include">
+          <e p="Interfaces" t="Include">
+            <e p="IMediaWikiApi.cs" t="Include" />
+            <e p="IWebServiceClient.cs" t="Include" />
+          </e>
+          <e p="WebServiceClient.cs" t="Include" />
+        </e>
+        <e p="Startup" t="Include">
+          <e p="Installer.cs" t="Include" />
+        </e>
+        <e p="Stwalkerster.Bot.MediaWikiLib.csproj" t="IncludeRecursive" />
+        <e p="Stwalkerster.Bot.MediaWikiLib.nuspec" t="Include" />
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="obj" t="ExcludeRecursive" />
+        <e p="packages.config" t="Include" />
+      </e>
+      <e p="Stwalkerster.Bot.MediaWikiLib.Tests" t="IncludeRecursive">
+        <e p="Properties" t="Include">
+          <e p="AssemblyInfo.cs" t="Include" />
+        </e>
+        <e p="Stwalkerster.Bot.MediaWikiLib.Tests.csproj" t="IncludeRecursive" />
+        <e p="Tests.cs" t="Include" />
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="obj" t="ExcludeRecursive" />
+        <e p="packages.config" t="Include" />
+      </e>
+      <e p="Stwalkerster.Bot.MediaWikiLib.sln" t="IncludeFlat" />
+      <e p="packages" t="ExcludeRecursive" />
+    </e>
+  </component>
+</project>
