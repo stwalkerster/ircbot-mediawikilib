@@ -50,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Configuration\IMediaWikiConfiguration.cs" />
+    <Compile Include="Configuration\MediaWikiConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\Interfaces\IMediaWikiApi.cs" />
     <Compile Include="Services\Interfaces\IWebServiceClient.cs" />
