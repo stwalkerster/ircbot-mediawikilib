@@ -1,5 +1,6 @@
 ﻿namespace Stwalkerster.Bot.MediaWikiLib.Services
 {
+    using System;
     using System.Collections.Generic;
     using System.Collections.Specialized;
     using System.IO;
@@ -223,7 +224,195 @@
                 this.cookieJar,
                 false);
         }
+
+        public int GetCategorySize(string categoryName)
+        {
+            var queryParameters = new NameValueCollection
+            {
+                {"action", "query"},
+                {"prop", "categoryinfo"},
+                {"titles", "Category:" + categoryName},
+            };
+            
+            var apiResult = this.wsClient.DoApiCall(
+                queryParameters,
+                this.config.MediaWikiApiEndpoint,
+                this.config.UserAgent,
+                this.cookieJar,
+                false);
+            
+            var nav = new XPathDocument(apiResult).CreateNavigator();
+
+            var missing = nav.SelectSingleNode("//page/@missing");
+            if (missing != null)
+            {
+                throw new GeneralMediaWikiApiException("Category not found");
+            }
+
+            var pages = nav.SelectSingleNode("//page/categoryinfo/@pages");
+
+            if (pages != null)
+            {
+                return pages.ValueAsInt;
+            }
+            
+            throw new GeneralMediaWikiApiException();
+        }
+
+        public IEnumerable<string> GetPagesInCategory(string category)
+        {
+            var queryParameters = new NameValueCollection
+            {
+                {"action", "query"},
+                {"list", "categorymembers"},
+                {"cmprop", "title"},
+                {"cmlimit", "50"},
+                {"cmtitle", category},
+            };
+
+            var apiResult = this.wsClient.DoApiCall(
+                queryParameters,
+                this.config.MediaWikiApiEndpoint,
+                this.config.UserAgent,
+                this.cookieJar,
+                false);
+            
+            var nav = new XPathDocument(apiResult).CreateNavigator();
+            var xPathNodeIterator = nav.Select("//categorymembers/cm/@title");
+
+            var pages = new List<string>();
+            foreach (XPathNavigator node in xPathNodeIterator)
+            {
+                pages.Add(node.Value);
+            }
+
+            return pages;
+        }
+
+        public string GetArticlePath()
+        {
+            var queryParameters = new NameValueCollection
+            {
+                {"action", "query"},
+                {"meta", "siteinfo"},
+                {"siprop", "general"},
+            };
+
+            var apiResult = this.wsClient.DoApiCall(
+                queryParameters,
+                this.config.MediaWikiApiEndpoint,
+                this.config.UserAgent,
+                this.cookieJar,
+                false);
+            
+            var nav = new XPathDocument(apiResult).CreateNavigator();
+
+            var articlePathAttribute = nav.SelectSingleNode("//general/@articlepath");
+            var serverAttribute = nav.SelectSingleNode("//general/@server");
+
+            if (articlePathAttribute == null || serverAttribute == null)
+            {
+                throw new GeneralMediaWikiApiException("Unable to calculate article path");
+            }
+
+            return serverAttribute.Value + articlePathAttribute.Value;
+        }
         
+        public string GetMaxLag()
+        {
+            var queryParameters = new NameValueCollection
+            {
+                {"action", "query"},
+                {"meta", "siteinfo"},
+                {"siprop", "dbrepllag"},
+            };
+
+            var apiResult = this.wsClient.DoApiCall(
+                queryParameters,
+                this.config.MediaWikiApiEndpoint,
+                this.config.UserAgent,
+                this.cookieJar,
+                false);
+            
+            var nav = new XPathDocument(apiResult).CreateNavigator();
+
+            var lagAttribute = nav.SelectSingleNode("//dbrepllag/db/@lag");
+            
+            if (lagAttribute == null)
+            {
+                throw new GeneralMediaWikiApiException("Unable to calculate article path");
+            }
+
+            return lagAttribute.Value;
+        }
+
+        public DateTime? GetRegistrationDate(string username)
+        {
+            var queryParameters = new NameValueCollection
+            {
+                {"action", "query"},
+                {"list", "users"},
+                {"usprop", "registration"},
+                {"ususers", username},
+            };
+
+            var apiResult = this.wsClient.DoApiCall(
+                queryParameters,
+                this.config.MediaWikiApiEndpoint,
+                this.config.UserAgent,
+                this.cookieJar,
+                false);
+            
+            var nav = new XPathDocument(apiResult).CreateNavigator();
+
+            var missingAttribute = nav.SelectSingleNode("//users/user/@missing");
+            if (missingAttribute != null)
+            {
+                throw new GeneralMediaWikiApiException("Missing user");
+            }
+            
+            var regAttribute = nav.SelectSingleNode("//users/user/@registration");
+            if (regAttribute == null)
+            {
+                return null;
+            }
+
+            return regAttribute.ValueAsDateTime;
+        } 
+        
+        public int GetEditCount(string username)
+        {
+            var queryParameters = new NameValueCollection
+            {
+                {"action", "query"},
+                {"list", "users"},
+                {"usprop", "editcount"},
+                {"ususers", username},
+            };
+
+            var apiResult = this.wsClient.DoApiCall(
+                queryParameters,
+                this.config.MediaWikiApiEndpoint,
+                this.config.UserAgent,
+                this.cookieJar,
+                false);
+            
+            var nav = new XPathDocument(apiResult).CreateNavigator();
+
+            var missingAttribute = nav.SelectSingleNode("//users/user/@missing");
+            if (missingAttribute != null)
+            {
+                throw new GeneralMediaWikiApiException("Missing user");
+            }
+            
+            var editCountAttribute = nav.SelectSingleNode("//users/user/@editcount");
+            if (editCountAttribute == null)
+            {
+                throw new GeneralMediaWikiApiException();
+            }
+
+            return editCountAttribute.ValueAsInt;
+        }
         
         public IEnumerable<string> GetUserGroups(string user)
         {
