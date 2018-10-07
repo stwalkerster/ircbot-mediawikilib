@@ -6,20 +6,23 @@
     using System.Linq;
     using System.Xml.XPath;
     using Castle.Core.Logging;
+    using Stwalkerster.Bot.MediaWikiLib.Configuration;
     using Stwalkerster.Bot.MediaWikiLib.Services.Interfaces;
 
     public class MediaWikiApi : IMediaWikiApi
     {
         private readonly ILogger logger;
         private readonly IWebServiceClient wsClient;
+        private readonly IMediaWikiConfiguration config;
 
         private readonly Dictionary<string, List<string>> rightsCache;
-        
-        public MediaWikiApi(ILogger logger, IWebServiceClient wsClient)
+
+        public MediaWikiApi(ILogger logger, IWebServiceClient wsClient, IMediaWikiConfiguration mediaWikiConfiguration)
         {
             this.logger = logger;
             this.wsClient = wsClient;
-            
+            this.config = mediaWikiConfiguration;
+
             this.rightsCache = new Dictionary<string, List<string>>();
         }
 
@@ -30,9 +33,9 @@
                 this.logger.DebugFormat("Getting groups for {0} from cache", user);
                 return this.rightsCache[user];
             }
-            
+
             this.logger.InfoFormat("Getting groups for {0} from webservice", user);
-                
+
             var queryparams = new NameValueCollection
             {
                 {"action", "query"},
@@ -41,16 +44,18 @@
                 {"ususers", user}
             };
 
-            var userGroups = this.GetGroups(this.wsClient.DoApiCall(queryparams)).ToList();
+            var userGroups = this.GetGroups(
+                    this.wsClient.DoApiCall(queryparams, this.config.MediaWikiApiEndpoint, this.config.UserAgent))
+                .ToList();
             this.rightsCache.Add(user, userGroups);
-            
+
             return userGroups;
         }
 
         public bool PageIsInCategory(string page, string category)
         {
             this.logger.InfoFormat("Getting category {1} for {0} from webservice", page, category);
-            
+
             var queryparams = new NameValueCollection
             {
                 {"action", "query"},
@@ -59,7 +64,9 @@
                 {"clcategories", category},
             };
 
-            var result = this.GetCategories(this.wsClient.DoApiCall(queryparams)).ToList();
+            var result = this.GetCategories(
+                    this.wsClient.DoApiCall(queryparams, this.config.MediaWikiApiEndpoint, this.config.UserAgent))
+                .ToList();
             return result.Any();
         }
 

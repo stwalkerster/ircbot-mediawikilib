@@ -5,6 +5,6 @@
 
     public interface IWebServiceClient
     {
-        Stream DoApiCall(NameValueCollection query);
+        Stream DoApiCall(NameValueCollection query, string endpoint, string userAgent);
     }
 }

@@ -19,9 +19,9 @@
         public void LocalSetup()
         {
             this.wsClient = new Mock<IWebServiceClient>();
-            this.mwApi = new MediaWikiApi(this.LoggerMock.Object, this.wsClient.Object);
+            this.mwApi = new MediaWikiApi(this.LoggerMock.Object, this.wsClient.Object, this.AppConfigMock.Object);
         }
-        
+
         [Test, TestCaseSource(typeof(MediaWikiApiTests), "GroupParseTestCases")]
         public List<string> ShouldParseGroupsCorrectly(string user, string input)
         {
@@ -31,13 +31,15 @@
             sw.Write(input);
             sw.Flush();
             memstream.Position = 0;
-            
-            this.wsClient.Setup(x => x.DoApiCall(It.IsAny<NameValueCollection>())).Returns(memstream);
-            
+
+            this.wsClient
+                .Setup(x => x.DoApiCall(It.IsAny<NameValueCollection>(), It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(memstream);
+
             // act
             return this.mwApi.GetUserGroups(user).ToList();
         }
-        
+
         [Test, TestCaseSource(typeof(MediaWikiApiTests), "CategoryParseTestCases")]
         public bool ShouldParseCategoriesCorrectly(string input)
         {
@@ -47,9 +49,11 @@
             sw.Write(input);
             sw.Flush();
             memstream.Position = 0;
-            
-            this.wsClient.Setup(x => x.DoApiCall(It.IsAny<NameValueCollection>())).Returns(memstream);
-            
+
+            this.wsClient
+                .Setup(x => x.DoApiCall(It.IsAny<NameValueCollection>(), It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(memstream);
+
             // act
             return this.mwApi.PageIsInCategory(string.Empty, string.Empty);
         }
