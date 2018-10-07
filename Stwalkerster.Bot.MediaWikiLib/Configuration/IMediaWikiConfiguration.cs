@@ -4,5 +4,7 @@ namespace Stwalkerster.Bot.MediaWikiLib.Configuration
     {
         string MediaWikiApiEndpoint { get; }
         string UserAgent { get; }
+        string Username { get; }
+        string Password { get; }
     }
 }
