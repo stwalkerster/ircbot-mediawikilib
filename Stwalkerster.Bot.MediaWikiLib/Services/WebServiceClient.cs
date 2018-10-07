@@ -20,16 +20,40 @@
 
         public Stream DoApiCall(NameValueCollection query, string endpoint, string userAgent)
         {
+            return this.DoApiCall(query, endpoint, userAgent, new CookieContainer(), false);
+        }
+
+        public Stream DoApiCall(NameValueCollection query, string endpoint, string userAgent, CookieContainer cookieJar, bool post)
+        {
             query.Set("format", "xml");
 
             var queryFragment = string.Join("&", query.AllKeys.Select(a => a + "=" + WebUtility.UrlEncode(query[a])));
             
-            var url = string.Format("{0}?{1}", endpoint, queryFragment);
+            var url = endpoint;
+
+            if (!post)
+            {
+                url = string.Format("{0}?{1}", endpoint, queryFragment);
+            }
             
             this.logger.DebugFormat("Requesting {0}", url);
             
             var hwr = (HttpWebRequest)WebRequest.Create(url);
+            hwr.CookieContainer = cookieJar;
             hwr.UserAgent = userAgent;
+            hwr.Method = post ? "POST" : "GET";
+
+            if (post)
+            {
+                hwr.ContentType = "application/x-www-form-urlencoded";
+                hwr.ContentLength = queryFragment.Length;
+
+                using (var requestWriter = new StreamWriter(hwr.GetRequestStream()))
+                {
+                    requestWriter.Write(queryFragment);
+                    requestWriter.Flush();
+                }
+            }
             
             var memoryStream = new MemoryStream();
 
@@ -37,6 +61,8 @@
             {
                 using (var resp = (HttpWebResponse) hwr.GetResponse())
                 {
+                    cookieJar.Add(resp.Cookies);
+                    
                     var responseStream = resp.GetResponseStream();
 
                     if (responseStream == null)
