@@ -2,15 +2,13 @@
 <build-type xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" uuid="afe48d57-f7cb-406a-8549-de14162f74d4" xsi:noNamespaceSchemaLocation="http://www.jetbrains.com/teamcity/schemas/2018.1/project-config.xsd">
   <name>Stwalkerster.Bot.MediaWikiLib</name>
   <description>MediaWiki Library</description>
-  <settings>
-    <options>
-      <option name="buildNumberPattern" value="%version%.%build.counter%" />
-    </options>
+  <settings ref="DotNetLibrary">
     <parameters>
-      <param name="system.Configuration" value="Release" />
+      <param name="primaryProjectName"><![CDATA[Stwalkerster.Bot.MediaWikiLib]]></param>
+      <param name="solutionName" value="MediaWikiLib" />
       <param name="version" value="2.5" />
     </parameters>
-    <build-runners>
+    <build-runners order="RUNNER_14, RUNNER_3, RUNNER_13, RUNNER_15, RUNNER_16">
       <runner id="RUNNER_14" name="" type="jb.nuget.installer">
         <parameters>
           <param name="nuget.path" value="%teamcity.tool.NuGet.CommandLine.DEFAULT%" />
@@ -72,25 +70,7 @@
       <vcs-entry-ref root-id="Irc_StwalkersterBotMediaWikiLib_MediaWikiLib" />
     </vcs-settings>
     <requirements />
-    <build-triggers>
-      <build-trigger id="vcsTrigger" type="vcsTrigger">
-        <parameters>
-          <param name="groupCheckinsByCommitter" value="true" />
-          <param name="perCheckinTriggering" value="true" />
-          <param name="quietPeriodMode" value="DO_NOT_USE" />
-        </parameters>
-      </build-trigger>
-    </build-triggers>
-    <build-extensions>
-      <extension id="JetBrains.AssemblyInfo" type="JetBrains.AssemblyInfo">
-        <parameters>
-          <param name="assembly-format" value="%version%.0.0" />
-          <param name="file-format" value="%version%.%build.counter%" />
-          <param name="info-format" value="%version%.%build.counter%-beta" />
-          <param name="patch-global-assembly-info" value="true" />
-        </parameters>
-      </extension>
-    </build-extensions>
+    <build-triggers />
     <cleanup />
   </settings>
 </build-type>
