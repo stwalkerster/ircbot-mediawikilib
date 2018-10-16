@@ -9,17 +9,6 @@
       <param name="version" value="2.5" />
     </parameters>
     <build-runners order="RUNNER_14, RUNNER_3, RUNNER_13, RUNNER_15, RUNNER_16">
-      <runner id="RUNNER_14" name="" type="jb.nuget.installer">
-        <parameters>
-          <param name="nuget.path" value="%teamcity.tool.NuGet.CommandLine.DEFAULT%" />
-          <param name="nuget.sources" value="https://nexus.scimonshouse.net/repository/nuget-group/" />
-          <param name="nuget.updatePackages.include.prerelease" value="true" />
-          <param name="nuget.updatePackages.mode" value="sln" />
-          <param name="nuget.use.restore" value="restore" />
-          <param name="sln.path" value="MediaWikiLib.sln" />
-          <param name="teamcity.step.mode" value="default" />
-        </parameters>
-      </runner>
       <runner id="RUNNER_15" name="Run Tests" type="simpleRunner">
         <parameters>
           <param name="command.executable" value="mono" />
