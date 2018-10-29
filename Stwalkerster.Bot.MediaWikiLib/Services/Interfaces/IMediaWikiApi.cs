@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using Stwalkerster.Bot.MediaWikiLib.Model;
 
     public interface IMediaWikiApi
     {
@@ -18,5 +19,6 @@
         string GetMaxLag();
         DateTime? GetRegistrationDate(string username);
         int GetEditCount(string username);
+        PageInformation GetPageInformation(string title);
     }
 }

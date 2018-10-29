@@ -10,6 +10,7 @@
     using Castle.Core.Logging;
     using Stwalkerster.Bot.MediaWikiLib.Configuration;
     using Stwalkerster.Bot.MediaWikiLib.Exceptions;
+    using Stwalkerster.Bot.MediaWikiLib.Model;
     using Stwalkerster.Bot.MediaWikiLib.Services.Interfaces;
 
     public class MediaWikiApi : IMediaWikiApi
@@ -534,6 +535,78 @@
             }
 
             return groups;
+        }
+        
+        public PageInformation GetPageInformation(string title)
+        {
+            var queryParameters = new NameValueCollection
+            {
+                {"action", "query"},
+                {"prop", "revisions|info"},
+                {"rvprop", "user|comment"},
+                {"inprop", "protection"},
+                {"redirects", ""},
+                {"titles", title}
+            };
+
+            var apiResult = this.wsClient.DoApiCall(
+                queryParameters,
+                this.config.MediaWikiApiEndpoint,
+                this.config.UserAgent,
+                this.cookieJar,
+                false);
+
+            var nav = new XPathDocument(apiResult).CreateNavigator();
+
+            var redirects = new List<string>();
+            var redirectsElement = nav.Select("//query/redirects/r/@from");
+
+            foreach (var r in redirectsElement)
+            {
+                redirects.Add(((XPathNavigator)r).Value);
+            }
+
+            var page = nav.SelectSingleNode("//page");
+
+            if (page == null)
+            {
+                return new PageInformation(redirects);
+            }
+
+            var pagetitle = page.SelectSingleNode("//@title").Value;
+            var missing = page.SelectSingleNode("//@missing") != null;
+
+            var pageProtections = new List<PageProtection>();
+            var protections = page.Select("//protection/pr");
+            foreach (var p in protections)
+            {
+                var xpn = (XPathNavigator)p;
+                var type = xpn.SelectSingleNode("//@type").Value;
+                var level = xpn.SelectSingleNode("//@level").Value;
+                
+                var expiry = xpn.SelectSingleNode("//@expiry").Value;
+
+                DateTime? expiryValue = null;
+                if (expiry != "infinity")
+                {
+                    expiryValue = xpn.SelectSingleNode("//@expiry").ValueAsDateTime;
+                }
+
+                pageProtections.Add(new PageProtection(type, level, expiryValue));
+            }
+            
+            if (missing)
+            {
+                return new PageInformation(redirects, pageProtections, pagetitle, true);
+            }
+            
+            var touched = page.SelectSingleNode("//@touched").ValueAsDateTime;
+            var length = page.SelectSingleNode("//@length").ValueAsInt;
+
+            var lastRevUser = page.SelectSingleNode("//rev/@user").Value;
+            var lastRevComment = page.SelectSingleNode("//rev/@comment").Value;
+
+            return new PageInformation(redirects, pageProtections, pagetitle, (uint)length, lastRevComment, lastRevUser, touched);
         }
     }
 }
