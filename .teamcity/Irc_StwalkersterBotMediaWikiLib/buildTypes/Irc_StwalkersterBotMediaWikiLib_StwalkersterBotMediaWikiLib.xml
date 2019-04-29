@@ -7,6 +7,7 @@
       <param name="primaryProjectName" value="Stwalkerster.Bot.MediaWikiLib" />
       <param name="solutionName" value="MediaWikiLib" />
       <param name="version" value="2.7" />
+      <param name="versiontag" value="" />
     </parameters>
     <build-runners order="RUNNER_14, RUNNER_3, RUNNER_15, RUNNER_16" />
     <vcs-settings>
