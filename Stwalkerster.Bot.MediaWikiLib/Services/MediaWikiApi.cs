@@ -47,7 +47,7 @@
                 this.config.UserAgent,
                 this.cookieJar,
                 false);
-            
+
             var nav = new XPathDocument(apiResult).CreateNavigator();
 
             var token = nav.SelectSingleNode("//tokens/@" + type + "token");
@@ -80,19 +80,19 @@
             {
                 return false;
             }
-            
+
             return userId.ValueAsInt > 0;
         }
-        
+
         public void Login()
         {
             if (this.IsLoggedIn())
             {
                 return;
             }
-            
+
             var token = this.GetToken("login");
-            
+
             var queryParameters = new NameValueCollection
             {
                 {"action", "login"},
@@ -107,7 +107,7 @@
                 this.config.UserAgent,
                 this.cookieJar,
                 true);
-         
+
             var nav = new XPathDocument(apiResult).CreateNavigator();
 
             var loginResult = nav.SelectSingleNode("//login/@result");
@@ -122,7 +122,7 @@
                 throw new GeneralMediaWikiApiException("Error logging in, service returned " + loginResult.Value);
             }
         }
-        
+
         public string GetPageContent(string pageName, out string timestamp)
         {
             var queryParameters = new NameValueCollection
@@ -157,14 +157,14 @@
             {
                 throw new GeneralMediaWikiApiException("No content found!");
             }
-            
+
             return content.Value;
         }
-        
+
         public bool WritePage(string pageName, string content, string editSummary, string timestamp, bool bot, bool minor)
         {
             var token = this.GetToken();
-            
+
             var queryParameters = new NameValueCollection
             {
                 {"action", "edit"},
@@ -185,7 +185,7 @@
             }
 
             queryParameters.Add(minor ? "minor" : "notminor", null);
-            
+
             // must be last
             queryParameters.Add("token", token);
 
@@ -202,14 +202,14 @@
             {
                 throw new GeneralMediaWikiApiException("No result available - something went wrong.");
             }
-            
+
             return result.Value == "Success";
         }
-        
+
         public void DeletePage(string pageName, string reason)
         {
             var token = this.GetToken();
-            
+
             var queryParameters = new NameValueCollection
             {
                 {"action", "delete"},
@@ -234,14 +234,14 @@
                 {"prop", "categoryinfo"},
                 {"titles", "Category:" + categoryName},
             };
-            
+
             var apiResult = this.wsClient.DoApiCall(
                 queryParameters,
                 this.config.MediaWikiApiEndpoint,
                 this.config.UserAgent,
                 this.cookieJar,
                 false);
-            
+
             var nav = new XPathDocument(apiResult).CreateNavigator();
 
             var missing = nav.SelectSingleNode("//page/@missing");
@@ -256,7 +256,7 @@
             {
                 return pages.ValueAsInt;
             }
-            
+
             throw new GeneralMediaWikiApiException();
         }
 
@@ -277,7 +277,7 @@
                 this.config.UserAgent,
                 this.cookieJar,
                 false);
-            
+
             var nav = new XPathDocument(apiResult).CreateNavigator();
             var xPathNodeIterator = nav.Select("//categorymembers/cm/@title");
 
@@ -305,7 +305,7 @@
                 this.config.UserAgent,
                 this.cookieJar,
                 false);
-            
+
             var nav = new XPathDocument(apiResult).CreateNavigator();
 
             var articlePathAttribute = nav.SelectSingleNode("//general/@articlepath");
@@ -318,7 +318,7 @@
 
             return serverAttribute.Value + articlePathAttribute.Value;
         }
-        
+
         public string GetMaxLag()
         {
             var queryParameters = new NameValueCollection
@@ -334,11 +334,11 @@
                 this.config.UserAgent,
                 this.cookieJar,
                 false);
-            
+
             var nav = new XPathDocument(apiResult).CreateNavigator();
 
             var lagAttribute = nav.SelectSingleNode("//dbrepllag/db/@lag");
-            
+
             if (lagAttribute == null)
             {
                 throw new GeneralMediaWikiApiException("Unable to calculate article path");
@@ -363,7 +363,7 @@
                 this.config.UserAgent,
                 this.cookieJar,
                 false);
-            
+
             var nav = new XPathDocument(apiResult).CreateNavigator();
 
             var missingAttribute = nav.SelectSingleNode("//users/user/@missing");
@@ -371,7 +371,7 @@
             {
                 throw new GeneralMediaWikiApiException("Missing user");
             }
-            
+
             var regAttribute = nav.SelectSingleNode("//users/user/@registration");
             if (regAttribute == null)
             {
@@ -379,8 +379,8 @@
             }
 
             return regAttribute.ValueAsDateTime;
-        } 
-        
+        }
+
         public int GetEditCount(string username)
         {
             var queryParameters = new NameValueCollection
@@ -397,7 +397,7 @@
                 this.config.UserAgent,
                 this.cookieJar,
                 false);
-            
+
             var nav = new XPathDocument(apiResult).CreateNavigator();
 
             var missingAttribute = nav.SelectSingleNode("//users/user/@missing");
@@ -405,7 +405,7 @@
             {
                 throw new GeneralMediaWikiApiException("Missing user");
             }
-            
+
             var editCountAttribute = nav.SelectSingleNode("//users/user/@editcount");
             if (editCountAttribute == null)
             {
@@ -414,7 +414,7 @@
 
             return editCountAttribute.ValueAsInt;
         }
-        
+
         public IEnumerable<string> GetUserGroups(string user)
         {
             if (this.rightsCache.ContainsKey(user))
@@ -444,7 +444,7 @@
         public IEnumerable<string> PrefixSearch(string prefix)
         {
             bool continuePresent;
-            
+
             var queryParameters = new NameValueCollection
             {
                 {"action", "query"},
@@ -461,7 +461,7 @@
                     this.config.UserAgent,
                     this.cookieJar,
                     false);
-                
+
                 var nav = new XPathDocument(apiResult).CreateNavigator();
 
                 var contNode = nav.SelectSingleNode("//continue");
@@ -486,10 +486,10 @@
                 {
                     yield return page.ToString();
                 }
-                
+
             } while (continuePresent);
         }
-        
+
         public bool PageIsInCategory(string page, string category)
         {
             this.logger.InfoFormat("Getting category {1} for {0} from webservice", page, category);
@@ -536,7 +536,7 @@
 
             return groups;
         }
-        
+
         public PageInformation GetPageInformation(string title)
         {
             var queryParameters = new NameValueCollection
@@ -583,7 +583,7 @@
                 var xpn = (XPathNavigator)p;
                 var type = xpn.SelectSingleNode("//@type").Value;
                 var level = xpn.SelectSingleNode("//@level").Value;
-                
+
                 var expiry = xpn.SelectSingleNode("//@expiry").Value;
 
                 DateTime? expiryValue = null;
@@ -594,12 +594,12 @@
 
                 pageProtections.Add(new PageProtection(type, level, expiryValue));
             }
-            
+
             if (missing)
             {
                 return new PageInformation(redirects, pageProtections, pagetitle, true);
             }
-            
+
             var touched = page.SelectSingleNode("//@touched").ValueAsDateTime;
             var length = page.SelectSingleNode("//@length").ValueAsInt;
 
@@ -607,6 +607,56 @@
             var lastRevComment = page.SelectSingleNode("//rev/@comment").Value;
 
             return new PageInformation(redirects, pageProtections, pagetitle, (uint)length, lastRevComment, lastRevUser, touched);
+        }
+
+        public IEnumerable<string> GetCategoriesOfPage(string title)
+        {
+            this.logger.InfoFormat("Getting categories for {0} from webservice", title);
+
+            var queryParameters = new NameValueCollection
+            {
+                {"action", "query"},
+                {"prop", "categories"},
+                {"titles", title},
+                {"clprop", "sortkey"},
+                {"cllimit", "max"}
+            };
+
+            var cats = new List<string>();
+
+            while (true)
+            {
+                var apiResult = this.wsClient.DoApiCall(
+                    queryParameters,
+                    this.config.MediaWikiApiEndpoint,
+                    this.config.UserAgent);
+
+                var nav = new XPathDocument(apiResult).CreateNavigator();
+
+                foreach (var node in nav.Select("//categories/cl/@title"))
+                {
+                    cats.Add(node.ToString());
+                }
+
+                var xPathNodeIterator = nav.Select("//continue");
+                if (xPathNodeIterator.Count == 0)
+                {
+                    // no continuation
+                    break;
+                }
+
+                xPathNodeIterator.MoveNext();
+                XPathNavigator attrNav = xPathNodeIterator.Current.Clone();
+
+                XPathNodeIterator attr = attrNav.Select("@*");
+                while(attr.MoveNext())
+                {
+                    queryParameters.Set(attr.Current.Name, attr.Current.Value);
+                }
+
+            }
+
+            return cats;
         }
     }
 }

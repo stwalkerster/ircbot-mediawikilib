@@ -74,9 +74,44 @@
             this.wsClient
                 .Setup(x => x.DoApiCall(It.IsAny<NameValueCollection>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CookieContainer>(), It.IsAny<bool>()))
                 .Returns(memoryStream);
-            
+
             // act
             return this.mwApi.GetPageInformation(string.Empty);
+        }
+
+        [Test]
+        public void ShouldRetrieveCategoriesCorrectly()
+        {
+            // arrange
+            var title = "Draft:Al Silva";
+
+            var return1 = "<api><continue clcontinue=\"58543806|AfC_submissions_declined_as_an_advertisement\" continue=\"||\" /><query><pages><page _idx=\"58543806\" pageid=\"58543806\" ns=\"118\" title=\"Draft:Al Silva\"><categories><cl ns=\"14\" title=\"Category:AfC submissions by date/21 September 2018\" sortkey=\"293f044d393f53290306293f044d393f5329011501dcc4dcc1dcc4dc08\" sortkeyprefix=\"Al Silva\" /><cl ns=\"14\" title=\"Category:AfC submissions declined as a non-notable biography\" sortkey=\"293f044d393f5329010c01dcc4dc08\" sortkeyprefix=\"\" /></categories></page></pages></query></api>";
+            var stream1 = new MemoryStream();
+            var sw = new StreamWriter(stream1);
+            sw.Write(return1);
+            sw.Flush();
+            stream1.Position = 0;
+
+            var return2 = "<api><query><pages><page _idx=\"58543806\" pageid=\"58543806\" ns=\"118\" title=\"Draft:Al Silva\"><categories><cl ns=\"14\" title=\"Category:AfC submissions declined as an advertisement\" sortkey=\"293f044d393f5329010c01dcc4dc08\" sortkeyprefix=\"\" /><cl ns=\"14\" title=\"Category:Declined AfC submissions\" sortkey=\"293f044d393f5329010c01dcc4dc08\" sortkeyprefix=\"\" /></categories></page></pages></query></api>";
+            var stream2 = new MemoryStream();
+            var sw2 = new StreamWriter(stream2);
+            sw2.Write(return2);
+            sw2.Flush();
+            stream2.Position = 0;
+
+            this.wsClient
+                .SetupSequence(x => x.DoApiCall(It.IsAny<NameValueCollection>(), It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(stream1)
+                .Returns(stream2);
+
+            // act
+            var categoriesOfPage = this.mwApi.GetCategoriesOfPage(title).ToList();
+
+            // assert
+            Assert.AreEqual(4, categoriesOfPage.Count);
+
+            Assert.Contains("Category:Declined AfC submissions", categoriesOfPage);
+            Assert.Contains("Category:AfC submissions by date/21 September 2018", categoriesOfPage);
         }
 
         public static IEnumerable<TestCaseData> GroupParseTestCases
@@ -184,9 +219,9 @@
                             "User:Stwalkerster/sandbox/r2",
                             true
                         ));
-                
+
                 // Redirect protection does nothing to affect the result when &redirects=true, including (as expected) for an A => B => A configuration.
-                
+
             }
         }
     }
