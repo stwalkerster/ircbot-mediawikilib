@@ -11,6 +11,7 @@
     <AssemblyName>Stwalkerster.Bot.MediaWikiLib</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <LangVersion>6</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -48,6 +49,7 @@
     <Compile Include="Configuration\IMediaWikiConfiguration.cs" />
     <Compile Include="Configuration\MediaWikiConfiguration.cs" />
     <Compile Include="Exceptions\GeneralMediaWikiApiException.cs" />
+    <Compile Include="Model\BlockInformation.cs" />
     <Compile Include="Model\PageInformation.cs" />
     <Compile Include="Model\PageProtection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

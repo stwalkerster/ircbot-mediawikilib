@@ -21,5 +21,6 @@
         int GetEditCount(string username);
         PageInformation GetPageInformation(string title);
         IEnumerable<string> GetCategoriesOfPage(string title);
+        IEnumerable<BlockInformation> GetBlockInformation(string username);
     }
 }

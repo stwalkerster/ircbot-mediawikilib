@@ -6,6 +6,7 @@
     using System.IO;
     using System.Linq;
     using System.Net;
+    using System.Xml;
     using System.Xml.XPath;
     using Castle.Core.Logging;
     using Stwalkerster.Bot.MediaWikiLib.Configuration;
@@ -657,6 +658,79 @@
             }
 
             return cats;
+        }
+
+        public IEnumerable<BlockInformation> GetBlockInformation(string username)
+        {
+            this.logger.InfoFormat("Getting blocks for {0} from webservice", username);
+
+            IPAddress _;
+            var queryParameters = new NameValueCollection
+            {
+                {"action", "query"},
+                {"list", "blocks"},
+                {IPAddress.TryParse(username, out _) ? "bkip" : "bkusers", username}
+            };
+
+
+            // ////////////////////
+            var blocks = new List<BlockInformation>();
+
+            while (true)
+            {
+                var apiResult = this.wsClient.DoApiCall(
+                    queryParameters,
+                    this.config.MediaWikiApiEndpoint,
+                    this.config.UserAgent);
+
+                var nav = new XPathDocument(apiResult).CreateNavigator();
+
+                foreach (var node in nav.Select("//query/blocks/block"))
+                {
+                    var xpn = node as XPathNavigator;
+
+                    if (xpn == null)
+                    {
+                        this.logger.Warn("Null navigator while parsing block data?!");
+                        continue;
+                    }
+
+                    var block = new BlockInformation();
+
+                    block.Id = xpn.SelectSingleNode("//@id")?.Value;
+                    block.Target = xpn.SelectSingleNode("//@user")?.Value;
+                    block.BlockedBy = xpn.SelectSingleNode("//@by")?.Value;
+                    block.Start = xpn.SelectSingleNode("//@timestamp")?.Value;
+                    block.Expiry = xpn.SelectSingleNode("//@expiry")?.Value;
+                    block.BlockReason = xpn.SelectSingleNode("//@reason")?.Value;
+
+                    block.AutoBlock = xpn.SelectSingleNode("//@autoblock") != null;
+                    block.NoCreate = xpn.SelectSingleNode("//@nocreate") != null;
+                    block.NoEmail = xpn.SelectSingleNode("//@noemail") != null;
+                    block.AllowUserTalk = xpn.SelectSingleNode("//@allowusertalk") != null;
+                    block.AnonOnly = xpn.SelectSingleNode("//@anononly") != null;
+
+                    blocks.Add(block);
+                }
+
+                var xPathNodeIterator = nav.Select("//continue");
+                if (xPathNodeIterator.Count == 0)
+                {
+                    // no continuation
+                    break;
+                }
+
+                xPathNodeIterator.MoveNext();
+                var attrNav = xPathNodeIterator.Current.Clone();
+
+                var attr = attrNav.Select("@*");
+                while(attr.MoveNext())
+                {
+                    queryParameters.Set(attr.Current.Name, attr.Current.Value);
+                }
+            }
+
+            return blocks;
         }
     }
 }

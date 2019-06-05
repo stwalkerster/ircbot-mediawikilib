@@ -114,6 +114,25 @@
             Assert.Contains("Category:AfC submissions by date/21 September 2018", categoriesOfPage);
         }
 
+        [Test]
+        public void ShouldParseBlocksCorrectly()
+        {
+            var return1 = "<?xml version=\"1.0\"?><api batchcomplete=\"\"><query><blocks><block id=\"9062654\" user=\"Od Mishehu\" by=\"BU Rob13\" timestamp=\"2019-06-05T22:52:39Z\" expiry=\"infinity\" reason=\"{{checkuserblock-account}}\" nocreate=\"\" autoblock=\"\" allowusertalk=\"\" /></blocks></query></api>";
+            var stream1 = new MemoryStream();
+            var sw = new StreamWriter(stream1);
+            sw.Write(return1);
+            sw.Flush();
+            stream1.Position = 0;
+
+            this.wsClient
+                .Setup(x => x.DoApiCall(It.IsAny<NameValueCollection>(), It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(stream1);
+
+            var blocks = this.mwApi.GetBlockInformation("foo");
+
+            Assert.Pass();
+        }
+
         public static IEnumerable<TestCaseData> GroupParseTestCases
         {
             get
