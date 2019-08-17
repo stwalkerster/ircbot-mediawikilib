@@ -8,6 +8,7 @@
       <param name="solutionName" value="MediaWikiLib" />
       <param name="version" value="2.8" />
       <param name="versiontag" value="" />
+      <param name="nunitRunner" value="3.10.0" />
     </parameters>
     <build-runners order="RUNNER_14, RUNNER_3, RUNNER_15, RUNNER_16" />
     <vcs-settings>
