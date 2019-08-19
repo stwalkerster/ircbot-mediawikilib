@@ -9,6 +9,7 @@
     using System.Net;
     using System.Xml;
     using System.Xml.XPath;
+    using Castle.Components.DictionaryAdapter.Xml;
     using Castle.Core.Logging;
     using Stwalkerster.Bot.MediaWikiLib.Configuration;
     using Stwalkerster.Bot.MediaWikiLib.Exceptions;
@@ -566,8 +567,9 @@
                 var title = xpn.SelectSingleNode("//@title").Value;
                 var timestamp = xpn.SelectSingleNode("//@timestamp").Value;
                 var comment = xpn.SelectSingleNode("//@comment").Value;
+                var revid = xpn.SelectSingleNode("//@revid").Value;
 
-                yield return new Contribution(user, title, comment, timestamp);
+                yield return new Contribution(user, title, comment, timestamp, revid);
             }
         }
         
