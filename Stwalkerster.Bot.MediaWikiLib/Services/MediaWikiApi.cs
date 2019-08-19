@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Collections.Specialized;
+    using System.Globalization;
     using System.IO;
     using System.Linq;
     using System.Net;
@@ -538,6 +539,38 @@
             return groups;
         }
 
+        public IEnumerable<Contribution> GetContributions(string user, int limit)
+        {
+            var queryParameters = new NameValueCollection
+            {
+                {"action", "query"},
+                {"list", "usercontribs"},
+                {"uclimit", limit.ToString(CultureInfo.InvariantCulture)},
+                {"ucuser", user}
+            };
+
+            var apiResult = this.wsClient.DoApiCall(
+                queryParameters,
+                this.config.MediaWikiApiEndpoint,
+                this.config.UserAgent,
+                this.cookieJar,
+                false);
+            
+            var nav = new XPathDocument(apiResult).CreateNavigator();
+
+            var contribsElements = nav.Select("//query/usercontribs/item");
+
+            foreach (var c in contribsElements)
+            {
+                var xpn = (XPathNavigator)c;
+                var title = xpn.SelectSingleNode("//@title").Value;
+                var timestamp = xpn.SelectSingleNode("//@timestamp").Value;
+                var comment = xpn.SelectSingleNode("//@comment").Value;
+
+                yield return new Contribution(user, title, comment, timestamp);
+            }
+        }
+        
         public PageInformation GetPageInformation(string title)
         {
             var queryParameters = new NameValueCollection
