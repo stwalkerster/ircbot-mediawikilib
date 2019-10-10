@@ -51,6 +51,7 @@
     <Compile Include="Exceptions\GeneralMediaWikiApiException.cs" />
     <Compile Include="Model\BlockInformation.cs" />
     <Compile Include="Model\Contribution.cs" />
+    <Compile Include="Model\PageCategoryProperties.cs" />
     <Compile Include="Model\PageInformation.cs" />
     <Compile Include="Model\PageProtection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

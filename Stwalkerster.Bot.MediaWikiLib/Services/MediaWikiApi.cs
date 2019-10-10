@@ -7,9 +7,7 @@
     using System.IO;
     using System.Linq;
     using System.Net;
-    using System.Xml;
     using System.Xml.XPath;
-    using Castle.Components.DictionaryAdapter.Xml;
     using Castle.Core.Logging;
     using Stwalkerster.Bot.MediaWikiLib.Configuration;
     using Stwalkerster.Bot.MediaWikiLib.Exceptions;
@@ -645,7 +643,7 @@
             return new PageInformation(redirects, pageProtections, pagetitle, (uint)length, lastRevComment, lastRevUser, touched);
         }
 
-        public IEnumerable<string> GetCategoriesOfPage(string title)
+        public IDictionary<string, PageCategoryProperties> GetCategoriesOfPage(string title)
         {
             this.logger.InfoFormat("Getting categories for {0} from webservice", title);
 
@@ -654,11 +652,11 @@
                 {"action", "query"},
                 {"prop", "categories"},
                 {"titles", title},
-                {"clprop", "sortkey"},
+                {"clprop", "sortkey|hidden"},
                 {"cllimit", "max"}
             };
 
-            var cats = new List<string>();
+            var cats = new Dictionary<string, PageCategoryProperties>();
 
             while (true)
             {
@@ -669,9 +667,14 @@
 
                 var nav = new XPathDocument(apiResult).CreateNavigator();
 
-                foreach (var node in nav.Select("//categories/cl/@title"))
+                foreach (var node in nav.Select("//categories/cl"))
                 {
-                    cats.Add(node.ToString());
+                    var xpn = (XPathNavigator)node;
+                    var hidden = xpn.SelectSingleNode("@hidden") != null;
+
+                    cats.Add(
+                        xpn.GetAttribute("title", ""),
+                        new PageCategoryProperties {SortKey = xpn.GetAttribute("sortkeyprefix", ""), Hidden = hidden});
                 }
 
                 var xPathNodeIterator = nav.Select("//continue");
