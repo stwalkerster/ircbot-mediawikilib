@@ -110,8 +110,8 @@
             // assert
             Assert.AreEqual(4, categoriesOfPage.Count);
 
-            Assert.Contains("Category:Declined AfC submissions", categoriesOfPage);
-            Assert.Contains("Category:AfC submissions by date/21 September 2018", categoriesOfPage);
+            Assert.Contains("Category:Declined AfC submissions", categoriesOfPage.Select(x => x.Key).ToList());
+            Assert.Contains("Category:AfC submissions by date/21 September 2018", categoriesOfPage.Select(x => x.Key).ToList());
         }
 
         [Test]
