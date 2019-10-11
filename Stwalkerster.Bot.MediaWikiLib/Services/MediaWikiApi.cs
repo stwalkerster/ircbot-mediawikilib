@@ -263,30 +263,68 @@
 
         public IEnumerable<string> GetPagesInCategory(string category)
         {
+            return this.GetPagesInCategory(category, false);
+        }
+        
+        public IEnumerable<string> GetPagesInCategory(string category, string limit)
+        {
+            return this.GetPagesInCategory(category, limit, false).Keys.ToList();
+        }
+        
+        public IEnumerable<string> GetPagesInCategory(string category, bool fetchAll)
+        {
+            return this.GetPagesInCategory(category, "max", fetchAll).Keys.ToList();
+        }
+
+        public IDictionary<string, string> GetPagesInCategory(string category, string limit, bool fetchAll)
+        {
+            var pages = new Dictionary<string, string>();
+            bool continuePresent;
+            
             var queryParameters = new NameValueCollection
             {
                 {"action", "query"},
                 {"list", "categorymembers"},
-                {"cmprop", "title"},
-                {"cmlimit", "50"},
+                {"cmprop", "title|sortkeyprefix"},
+                {"cmlimit", limit},
                 {"cmtitle", category},
             };
 
-            var apiResult = this.wsClient.DoApiCall(
-                queryParameters,
-                this.config.MediaWikiApiEndpoint,
-                this.config.UserAgent,
-                this.cookieJar,
-                false);
-
-            var nav = new XPathDocument(apiResult).CreateNavigator();
-            var xPathNodeIterator = nav.Select("//categorymembers/cm/@title");
-
-            var pages = new List<string>();
-            foreach (XPathNavigator node in xPathNodeIterator)
+            do
             {
-                pages.Add(node.Value);
-            }
+                var apiResult = this.wsClient.DoApiCall(
+                    queryParameters,
+                    this.config.MediaWikiApiEndpoint,
+                    this.config.UserAgent,
+                    this.cookieJar,
+                    false);
+
+                var nav = new XPathDocument(apiResult).CreateNavigator();
+
+                var contNode = nav.SelectSingleNode("//continue");
+                if (contNode != null)
+                {
+                    continuePresent = true;
+
+                    var attrIt = contNode.Select("@*");
+                    while (attrIt.MoveNext())
+                    {
+                        queryParameters.Remove(attrIt.Current.Name);
+                        queryParameters.Add(attrIt.Current.Name, attrIt.Current.Value);
+                    }
+                }
+                else
+                {
+                    continuePresent = false;
+                }
+
+                var xPathNodeIterator = nav.Select("//categorymembers/cm");
+
+                foreach (XPathNavigator node in xPathNodeIterator)
+                {
+                    pages.Add(node.GetAttribute("title", ""), node.GetAttribute("sortkeyprefix", ""));
+                }
+            } while (continuePresent && fetchAll);
 
             return pages;
         }
@@ -466,7 +504,6 @@
                 var nav = new XPathDocument(apiResult).CreateNavigator();
 
                 var contNode = nav.SelectSingleNode("//continue");
-
                 if (contNode != null)
                 {
                     continuePresent = true;

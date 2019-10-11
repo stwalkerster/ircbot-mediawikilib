@@ -15,6 +15,7 @@
         IEnumerable<string> PrefixSearch(string prefix);
         int GetCategorySize(string categoryName);
         IEnumerable<string> GetPagesInCategory(string category);
+        IEnumerable<string> GetPagesInCategory(string category, string limit);
         string GetArticlePath();
         string GetMaxLag();
         DateTime? GetRegistrationDate(string username);
@@ -23,5 +24,7 @@
         IDictionary<string, PageCategoryProperties> GetCategoriesOfPage(string title);
         IEnumerable<BlockInformation> GetBlockInformation(string username);
         IEnumerable<Contribution> GetContributions(string user, int limit);
+        IEnumerable<string> GetPagesInCategory(string category, bool fetchAll);
+        IDictionary<string, string> GetPagesInCategory(string category, string limit, bool fetchAll);
     }
 }
