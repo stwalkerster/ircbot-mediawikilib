@@ -674,7 +674,7 @@
 
                     cats.Add(
                         xpn.GetAttribute("title", ""),
-                        new PageCategoryProperties {SortKey = xpn.GetAttribute("sortkeyprefix", ""), Hidden = hidden});
+                        new PageCategoryProperties(xpn.GetAttribute("sortkeyprefix", ""), hidden));
                 }
 
                 var xPathNodeIterator = nav.Select("//continue");
