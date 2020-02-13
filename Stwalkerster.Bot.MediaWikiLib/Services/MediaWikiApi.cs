@@ -408,7 +408,7 @@
             var missingAttribute = nav.SelectSingleNode("//users/user/@missing");
             if (missingAttribute != null)
             {
-                throw new GeneralMediaWikiApiException("Missing user");
+                throw new MissingUserException();
             }
 
             var regAttribute = nav.SelectSingleNode("//users/user/@registration");
@@ -442,7 +442,7 @@
             var missingAttribute = nav.SelectSingleNode("//users/user/@missing");
             if (missingAttribute != null)
             {
-                throw new GeneralMediaWikiApiException("Missing user");
+                throw new MissingUserException();
             }
 
             var editCountAttribute = nav.SelectSingleNode("//users/user/@editcount");
@@ -561,9 +561,14 @@
         private IEnumerable<string> GetGroups(Stream apiResult)
         {
             var nav = new XPathDocument(apiResult).CreateNavigator();
-            if (nav.SelectSingleNode("//user/@invalid") != null || nav.SelectSingleNode("//user/@missing") != null)
+            if (nav.SelectSingleNode("//user/@invalid") != null)
             {
                 return new List<string> {"*"};
+            }
+
+            if (nav.SelectSingleNode("//user/@missing") != null)
+            {
+                throw new MissingUserException();
             }
 
             var groups = new List<string>();

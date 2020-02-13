@@ -8,6 +8,7 @@
     using System.Net;
     using Moq;
     using NUnit.Framework;
+    using Stwalkerster.Bot.MediaWikiLib.Exceptions;
     using Stwalkerster.Bot.MediaWikiLib.Model;
     using Stwalkerster.Bot.MediaWikiLib.Services;
     using Stwalkerster.Bot.MediaWikiLib.Services.Interfaces;
@@ -41,6 +42,22 @@
 
             // act
             return this.mwApi.GetUserGroups(user).ToList();
+        }
+
+        [Test]
+        public void ShouldParseGroupsOfNonexistentUser()
+        {
+            var memStream = new MemoryStream();
+            var sw = new StreamWriter(memStream);
+            sw.Write("<?xml version=\"1.0\"?><api batchcomplete=\"\"><query><users><user name=\"Stwnonexist\" missing=\"\" /></users></query></api>");
+            sw.Flush();
+            memStream.Position = 0;
+
+            this.wsClient
+                .Setup(x => x.DoApiCall(It.IsAny<NameValueCollection>(), It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(memStream);
+
+            Assert.Throws<MissingUserException>(() => this.mwApi.GetUserGroups("Stwnonexist"));
         }
 
         [Test, TestCaseSource(typeof(MediaWikiApiTests), "CategoryParseTestCases")]
@@ -141,10 +158,6 @@
                         "Stwalkerster",
                         "<?xml version=\"1.0\"?><api batchcomplete=\"\"><query><users><user userid=\"851859\" name=\"Stwalkerster\"><groups><g>abusefilter</g><g>sysop</g><g>*</g><g>user</g><g>autoconfirmed</g></groups></user></users></query></api>")
                     .Returns(new List<string> {"abusefilter", "sysop", "*", "user", "autoconfirmed"});
-                yield return new TestCaseData(
-                        "Stwnonexist",
-                        "<?xml version=\"1.0\"?><api batchcomplete=\"\"><query><users><user name=\"Stwnonexist\" missing=\"\" /></users></query></api>")
-                    .Returns(new List<string> {"*"});
                 yield return new TestCaseData(
                         "127.0.0.1",
                         "<?xml version=\"1.0\"?><api batchcomplete=\"\"><query><users><user name=\"127.0.0.1\" invalid=\"\" /></users></query></api>")

@@ -49,6 +49,7 @@
     <Compile Include="Configuration\IMediaWikiConfiguration.cs" />
     <Compile Include="Configuration\MediaWikiConfiguration.cs" />
     <Compile Include="Exceptions\GeneralMediaWikiApiException.cs" />
+    <Compile Include="Exceptions\MissingUserException.cs" />
     <Compile Include="Model\BlockInformation.cs" />
     <Compile Include="Model\Contribution.cs" />
     <Compile Include="Model\PageCategoryProperties.cs" />
