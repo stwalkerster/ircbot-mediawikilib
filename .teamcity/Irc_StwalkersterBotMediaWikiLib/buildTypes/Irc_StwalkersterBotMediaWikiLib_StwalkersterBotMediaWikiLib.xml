@@ -7,7 +7,7 @@
       <param name="nunitRunner" value="3.10.0" />
       <param name="primaryProjectName" value="Stwalkerster.Bot.MediaWikiLib" />
       <param name="solutionName" value="MediaWikiLib" />
-      <param name="version" value="3.0" />
+      <param name="version" value="3.1" />
       <param name="versiontag" value="" />
     </parameters>
     <build-runners order="RUNNER_14, RUNNER_3, RUNNER_15, RUNNER_16" />
