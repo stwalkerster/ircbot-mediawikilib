@@ -812,5 +812,35 @@
 
             return blocks;
         }
+
+        public string ShortenUrl(string url)
+        {
+            this.logger.InfoFormat("Getting shorturl for {0} from webservice", url);
+
+            var queryParameters = new NameValueCollection
+            {
+                {"action", "shortenurl"},
+                {"url", url}
+            };
+
+            var apiResult = this.wsClient.DoApiCall(
+                queryParameters,
+                this.config.MediaWikiApiEndpoint,
+                this.config.UserAgent,
+                this.cookieJar,
+                true);
+
+            var nav = new XPathDocument(apiResult).CreateNavigator();
+
+            var shortUrlAttribute = nav.SelectSingleNode("//shortenurl/@shorturl");
+
+            if (shortUrlAttribute == null)
+            {
+                throw new GeneralMediaWikiApiException("Unable to shorten URL");
+            }
+
+            return shortUrlAttribute.Value;
+
+        }
     }
 }

@@ -26,5 +26,6 @@
         IEnumerable<Contribution> GetContributions(string user, int limit);
         IEnumerable<string> GetPagesInCategory(string category, bool fetchAll);
         IDictionary<string, string> GetPagesInCategory(string category, string limit, bool fetchAll);
+        string ShortenUrl(string url);
     }
 }

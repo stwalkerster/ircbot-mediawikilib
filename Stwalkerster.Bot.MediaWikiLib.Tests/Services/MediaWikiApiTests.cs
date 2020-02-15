@@ -149,6 +149,25 @@
 
             Assert.Pass();
         }
+        
+        [Test]
+        public void ShouldShortenUrlCorrectly()
+        {
+            var return1 = "<?xml version=\"1.0\"?><api><shortenurl shorturl=\"https://w.wiki/tf\" /></api>";
+            var stream1 = new MemoryStream();
+            var sw = new StreamWriter(stream1);
+            sw.Write(return1);
+            sw.Flush();
+            stream1.Position = 0;
+
+            this.wsClient
+                .Setup(x => x.DoApiCall(It.IsAny<NameValueCollection>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CookieContainer>(), It.IsAny<bool>()))
+                .Returns(stream1);
+
+            var shorturl = this.mwApi.ShortenUrl("foo");
+
+            Assert.That(shorturl, Is.EqualTo("https://w.wiki/tf"));
+        }
 
         public static IEnumerable<TestCaseData> GroupParseTestCases
         {
