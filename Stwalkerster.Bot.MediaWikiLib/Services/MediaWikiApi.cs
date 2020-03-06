@@ -836,7 +836,8 @@
 
             if (shortUrlAttribute == null)
             {
-                throw new GeneralMediaWikiApiException("Unable to shorten URL");
+                var apiData = nav.OuterXml;
+                throw new GeneralMediaWikiApiException("Unable to shorten URL", apiData);
             }
 
             return shortUrlAttribute.Value;

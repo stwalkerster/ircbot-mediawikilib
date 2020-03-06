@@ -169,6 +169,24 @@
             Assert.That(shorturl, Is.EqualTo("https://w.wiki/tf"));
         }
 
+         
+        [Test]
+        public void ShouldFailToShortenUrlCorrectly()
+        {
+            var return1 = "<?xml version=\"1.0\"?><api><shortenurl /></api>";
+            var stream1 = new MemoryStream();
+            var sw = new StreamWriter(stream1);
+            sw.Write(return1);
+            sw.Flush();
+            stream1.Position = 0;
+
+            this.wsClient
+                .Setup(x => x.DoApiCall(It.IsAny<NameValueCollection>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CookieContainer>(), It.IsAny<bool>()))
+                .Returns(stream1);
+
+            Assert.Throws<GeneralMediaWikiApiException>(() => this.mwApi.ShortenUrl("foo"));
+        }
+        
         public static IEnumerable<TestCaseData> GroupParseTestCases
         {
             get
