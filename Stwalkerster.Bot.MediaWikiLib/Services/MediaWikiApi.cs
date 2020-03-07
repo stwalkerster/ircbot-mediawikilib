@@ -115,11 +115,13 @@
 
             if (loginResult == null)
             {
+                this.logger.Debug(nav.OuterXml);
                 throw new GeneralMediaWikiApiException("Error logging in!");
             }
 
             if (loginResult.Value != "Success")
             {
+                this.logger.Debug(nav.OuterXml);
                 throw new GeneralMediaWikiApiException("Error logging in, service returned " + loginResult.Value);
             }
         }
