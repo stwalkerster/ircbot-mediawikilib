@@ -4,7 +4,7 @@
   <description>MediaWiki Library</description>
   <settings ref="DotNetLibrary">
     <parameters>
-      <param name="nunitRunner" value="3.10.0" />
+      <param name="nunitRunner" value="3.11.1" />
       <param name="primaryProjectName" value="Stwalkerster.Bot.MediaWikiLib" />
       <param name="solutionName" value="MediaWikiLib" />
       <param name="version" value="3.2" />
