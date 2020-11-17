@@ -151,6 +151,27 @@
         }
         
         [Test]
+        public void ShouldParseMultipleBlocksCorrectly()
+        {
+            var return1 = "<?xml version=\"1.0\"?><api batchcomplete=\"\"><query><blocks><block id=\"10174849\" user=\"110.54.128.0/19\" by=\"AmandaNP\" timestamp=\"2020-11-12T05:38:20Z\" expiry=\"2023-10-12T13:48:53Z\" reason=\"{{anonblock}}: &lt;!-- CheckUser block, ACC CU - See CU wiki page [[ACCCUR]] --&gt;\" anononly=\"\" nocreate=\"\" /><block id=\"9445973\" user=\"110.54.128.0/17\" by=\"AmandaNP\" timestamp=\"2019-12-28T10:26:22Z\" expiry=\"2023-10-12T13:48:53Z\" reason=\"{{anonblock}}: &lt;!-- CheckUser block, ACC ignore - More specific range handles CU concern for now --&gt;\" anononly=\"\" nocreate=\"\" /></blocks></query></api>";
+            var stream1 = new MemoryStream();
+            var sw = new StreamWriter(stream1);
+            sw.Write(return1);
+            sw.Flush();
+            stream1.Position = 0;
+
+            this.wsClient
+                .Setup(x => x.DoApiCall(It.IsAny<NameValueCollection>(), It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(stream1);
+
+            var blocks = this.mwApi.GetBlockInformation("foo").ToList();
+
+            Assert.That(blocks.Count, Is.EqualTo(2));
+            Assert.That(blocks[0].Id, Is.EqualTo("10174849"));
+            Assert.That(blocks[1].Id, Is.EqualTo("9445973"));
+        }
+        
+        [Test]
         public void ShouldShortenUrlCorrectly()
         {
             var return1 = "<?xml version=\"1.0\"?><api><shortenurl shorturl=\"https://w.wiki/tf\" /></api>";
