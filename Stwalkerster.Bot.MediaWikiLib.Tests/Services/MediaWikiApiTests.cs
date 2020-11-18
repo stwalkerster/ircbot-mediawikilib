@@ -145,15 +145,29 @@
                 .Setup(x => x.DoApiCall(It.IsAny<NameValueCollection>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(stream1);
 
-            var blocks = this.mwApi.GetBlockInformation("foo");
+            var blocks = this.mwApi.GetBlockInformation("foo").ToList();
 
-            Assert.Pass();
+            // <block  reason=\"{{checkuserblock-account}}\" nocreate=\"\" autoblock=\"\" allowusertalk=\"\" />
+
+            // one block.
+            Assert.That(blocks.Count, Is.EqualTo(1));
+            Assert.That(blocks[0].Id, Is.EqualTo("9062654"));
+            Assert.That(blocks[0].Target, Is.EqualTo("Od Mishehu"));
+            Assert.That(blocks[0].BlockedBy, Is.EqualTo("BU Rob13"));
+            Assert.That(blocks[0].Start, Is.EqualTo("2019-06-05T22:52:39Z"));
+            Assert.That(blocks[0].Expiry, Is.EqualTo("infinity"));
+            Assert.That(blocks[0].BlockReason, Is.EqualTo("{{checkuserblock-account}}"));
+            Assert.That(blocks[0].AnonOnly, Is.False);
+            Assert.That(blocks[0].AutoBlock, Is.True);
+            Assert.That(blocks[0].NoCreate, Is.True);
+            Assert.That(blocks[0].NoEmail, Is.False);
+            Assert.That(blocks[0].AllowUserTalk, Is.True);
         }
         
         [Test]
         public void ShouldParseMultipleBlocksCorrectly()
         {
-            var return1 = "<?xml version=\"1.0\"?><api batchcomplete=\"\"><query><blocks><block id=\"10174849\" user=\"110.54.128.0/19\" by=\"AmandaNP\" timestamp=\"2020-11-12T05:38:20Z\" expiry=\"2023-10-12T13:48:53Z\" reason=\"{{anonblock}}: &lt;!-- CheckUser block, ACC CU - See CU wiki page [[ACCCUR]] --&gt;\" anononly=\"\" nocreate=\"\" /><block id=\"9445973\" user=\"110.54.128.0/17\" by=\"AmandaNP\" timestamp=\"2019-12-28T10:26:22Z\" expiry=\"2023-10-12T13:48:53Z\" reason=\"{{anonblock}}: &lt;!-- CheckUser block, ACC ignore - More specific range handles CU concern for now --&gt;\" anononly=\"\" nocreate=\"\" /></blocks></query></api>";
+            var return1 = "<?xml version=\"1.0\"?><api batchcomplete=\"\"><query><blocks><block id=\"10174849\" user=\"110.54.128.0/19\" by=\"AmandaNP\" timestamp=\"2020-11-12T05:38:20Z\" expiry=\"2023-10-12T13:48:53Z\" reason=\"{{anonblock}}: &lt;!-- CheckUser block, ACC CU - See CU wiki page [[ACCCUR]] --&gt;\" anononly=\"\" nocreate=\"\" /><block id=\"9445973\" user=\"110.54.128.0/17\" by=\"AmandaNP\" timestamp=\"2019-12-28T10:26:22Z\" expiry=\"2023-10-12T13:48:53Z\" reason=\"{{anonblock}}: &lt;!-- CheckUser block, ACC ignore - More specific range handles CU concern for now --&gt;\" anononly=\"\" nocreate=\"\" allowusertalk=\"\" /></blocks></query></api>";
             var stream1 = new MemoryStream();
             var sw = new StreamWriter(stream1);
             sw.Write(return1);
@@ -167,8 +181,33 @@
             var blocks = this.mwApi.GetBlockInformation("foo").ToList();
 
             Assert.That(blocks.Count, Is.EqualTo(2));
+            // <block id=\"10174849\" user=\"110.54.128.0/19\" by=\"AmandaNP\" timestamp=\"2020-11-12T05:38:20Z\" expiry=\"2023-10-12T13:48:53Z\"
+            // reason=\"{{anonblock}}: &lt;!-- CheckUser block, ACC CU - See CU wiki page [[ACCCUR]] --&gt;\" anononly=\"\" nocreate=\"\" />
             Assert.That(blocks[0].Id, Is.EqualTo("10174849"));
+            Assert.That(blocks[0].Target, Is.EqualTo("110.54.128.0/19"));
+            Assert.That(blocks[0].BlockedBy, Is.EqualTo("AmandaNP"));
+            Assert.That(blocks[0].Start, Is.EqualTo("2020-11-12T05:38:20Z"));
+            Assert.That(blocks[0].Expiry, Is.EqualTo("2023-10-12T13:48:53Z"));
+            Assert.That(blocks[0].BlockReason, Is.EqualTo("{{anonblock}}: <!-- CheckUser block, ACC CU - See CU wiki page [[ACCCUR]] -->"));
+            Assert.That(blocks[0].AnonOnly, Is.True);
+            Assert.That(blocks[0].AutoBlock, Is.False);
+            Assert.That(blocks[0].NoCreate, Is.True);
+            Assert.That(blocks[0].NoEmail, Is.False);
+            Assert.That(blocks[0].AllowUserTalk, Is.False);
+            
+            // <block id=\"9445973\" user=\"110.54.128.0/17\" by=\"AmandaNP\" timestamp=\"2019-12-28T10:26:22Z\" expiry=\"2023-10-12T13:48:53Z\"
+            // reason=\"{{anonblock}}: &lt;!-- CheckUser block, ACC ignore - More specific range handles CU concern for now --&gt;\" anononly=\"\" nocreate=\"\" />
             Assert.That(blocks[1].Id, Is.EqualTo("9445973"));
+            Assert.That(blocks[1].Target, Is.EqualTo("110.54.128.0/17"));
+            Assert.That(blocks[1].BlockedBy, Is.EqualTo("AmandaNP"));
+            Assert.That(blocks[1].Start, Is.EqualTo("2019-12-28T10:26:22Z"));
+            Assert.That(blocks[1].Expiry, Is.EqualTo("2023-10-12T13:48:53Z"));
+            Assert.That(blocks[1].BlockReason, Is.EqualTo("{{anonblock}}: <!-- CheckUser block, ACC ignore - More specific range handles CU concern for now -->"));
+            Assert.That(blocks[1].AnonOnly, Is.True);
+            Assert.That(blocks[1].AutoBlock, Is.False);
+            Assert.That(blocks[1].NoCreate, Is.True);
+            Assert.That(blocks[1].NoEmail, Is.False);
+            Assert.That(blocks[1].AllowUserTalk, Is.True);
         }
         
         [Test]

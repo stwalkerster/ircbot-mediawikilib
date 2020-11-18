@@ -779,18 +779,18 @@
 
                     var block = new BlockInformation();
 
-                    block.Id = xpn.SelectSingleNode("//@id")?.Value;
-                    block.Target = xpn.SelectSingleNode("//@user")?.Value;
-                    block.BlockedBy = xpn.SelectSingleNode("//@by")?.Value;
-                    block.Start = xpn.SelectSingleNode("//@timestamp")?.Value;
-                    block.Expiry = xpn.SelectSingleNode("//@expiry")?.Value;
-                    block.BlockReason = xpn.SelectSingleNode("//@reason")?.Value;
+                    block.Id = xpn.SelectSingleNode("@id")?.Value;
+                    block.Target = xpn.SelectSingleNode("@user")?.Value;
+                    block.BlockedBy = xpn.SelectSingleNode("@by")?.Value;
+                    block.Start = xpn.SelectSingleNode("@timestamp")?.Value;
+                    block.Expiry = xpn.SelectSingleNode("@expiry")?.Value;
+                    block.BlockReason = xpn.SelectSingleNode("@reason")?.Value;
 
-                    block.AutoBlock = xpn.SelectSingleNode("//@autoblock") != null;
-                    block.NoCreate = xpn.SelectSingleNode("//@nocreate") != null;
-                    block.NoEmail = xpn.SelectSingleNode("//@noemail") != null;
-                    block.AllowUserTalk = xpn.SelectSingleNode("//@allowusertalk") != null;
-                    block.AnonOnly = xpn.SelectSingleNode("//@anononly") != null;
+                    block.AutoBlock = xpn.SelectSingleNode("@autoblock") != null;
+                    block.NoCreate = xpn.SelectSingleNode("@nocreate") != null;
+                    block.NoEmail = xpn.SelectSingleNode("@noemail") != null;
+                    block.AllowUserTalk = xpn.SelectSingleNode("@allowusertalk") != null;
+                    block.AnonOnly = xpn.SelectSingleNode("@anononly") != null;
 
                     blocks.Add(block);
                 }
