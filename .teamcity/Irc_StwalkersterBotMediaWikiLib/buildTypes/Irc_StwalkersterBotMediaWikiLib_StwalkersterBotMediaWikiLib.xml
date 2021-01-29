@@ -13,16 +13,6 @@
       <param name="versiontag" value="-beta" spec="text description='e.g. &quot;-alpha&quot;' validationMode='any' display='normal'" />
     </parameters>
     <build-runners>
-      <runner id="RUNNER_14" name="" type="jb.nuget.installer">
-        <parameters>
-          <param name="nuget.path" value="%teamcity.tool.NuGet.CommandLine.DEFAULT%" />
-          <param name="nuget.sources" value="https://nexus.scimonshouse.net/repository/nuget-group/" />
-          <param name="nuget.updatePackages.mode" value="sln" />
-          <param name="nuget.use.restore" value="restore" />
-          <param name="sln.path" value="%pathPrefix%%solutionName%.sln" />
-          <param name="teamcity.step.mode" value="default" />
-        </parameters>
-      </runner>
       <runner id="RUNNER_3" name="xbuild" type="simpleRunner">
         <parameters>
           <param name="command.executable" value="/usr/bin/msbuild" />
