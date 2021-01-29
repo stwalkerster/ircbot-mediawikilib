@@ -4,7 +4,6 @@
   <description>MediaWiki Library</description>
   <settings ref="DotNetCoreLibrary">
     <parameters>
-      <param name="nunitRunner" value="3.11.1" />
       <param name="primaryProjectName" value="Stwalkerster.Bot.MediaWikiLib" />
       <param name="solutionName" value="MediaWikiLib" />
       <param name="version" value="4.0" spec="text display='normal' description='Two or three-part version number. The build counter will be appended to the end.' validationMode='any'" />
