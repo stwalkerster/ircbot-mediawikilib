@@ -18,7 +18,7 @@
       </dependency>
     </artifact-dependencies>
     <dependencies>
-      <depend-on sourceBuildTypeId="Irc_CommandLib_StwalkersterBotCommandLib">
+      <depend-on sourceBuildTypeId="Irc_StwalkersterBotMediaWikiLib_StwalkersterBotMediaWikiLib">
         <options>
           <option name="run-build-if-dependency-failed" value="RUN_ADD_PROBLEM" />
           <option name="take-started-build-with-same-revisions" value="true" />
