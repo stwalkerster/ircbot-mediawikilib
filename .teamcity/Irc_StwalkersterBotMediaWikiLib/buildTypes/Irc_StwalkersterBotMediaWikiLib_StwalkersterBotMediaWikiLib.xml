@@ -2,20 +2,83 @@
 <build-type xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" uuid="afe48d57-f7cb-406a-8549-de14162f74d4" paused="true" xsi:noNamespaceSchemaLocation="https://www.jetbrains.com/teamcity/schemas/2020.1/project-config.xsd">
   <name>Stwalkerster.Bot.MediaWikiLib</name>
   <description>MediaWiki Library</description>
-  <settings ref="DotNetLibrary">
+  <settings>
+    <options>
+      <option name="buildNumberPattern" value="%version%.%build.counter%%versiontag%" />
+    </options>
     <parameters>
+      <param name="extraParameters" value="" />
       <param name="nunitRunner" value="3.11.1" />
+      <param name="pathPrefix" value="" />
       <param name="primaryProjectName" value="Stwalkerster.Bot.MediaWikiLib" />
       <param name="solutionName" value="MediaWikiLib" />
+      <param name="system.Configuration" value="Release" />
+      <param name="testProjectName" value="%primaryProjectName%.Tests" />
       <param name="version" value="3.2" />
       <param name="versiontag" value="" />
     </parameters>
-    <build-runners order="RUNNER_14, RUNNER_3, RUNNER_15, RUNNER_16" />
+    <build-runners>
+      <runner id="RUNNER_14" name="" type="jb.nuget.installer">
+        <parameters>
+          <param name="nuget.path" value="%teamcity.tool.NuGet.CommandLine.DEFAULT%" />
+          <param name="nuget.sources" value="https://nexus.scimonshouse.net/repository/nuget-group/" />
+          <param name="nuget.updatePackages.mode" value="sln" />
+          <param name="nuget.use.restore" value="restore" />
+          <param name="sln.path" value="%pathPrefix%%solutionName%.sln" />
+          <param name="teamcity.step.mode" value="default" />
+        </parameters>
+      </runner>
+      <runner id="RUNNER_3" name="xbuild" type="simpleRunner">
+        <parameters>
+          <param name="command.executable" value="/usr/bin/msbuild" />
+          <param name="command.parameters" value="%pathPrefix%%solutionName%.sln /p:Configuration=Release %extraParameters%" />
+          <param name="teamcity.step.mode" value="default" />
+        </parameters>
+      </runner>
+      <runner id="RUNNER_15" name="Run Tests" type="simpleRunner">
+        <parameters>
+          <param name="command.executable" value="mono" />
+          <param name="command.parameters" value="%pathPrefix%packages/NUnit.ConsoleRunner.%nunitRunner%/tools/nunit3-console.exe %pathPrefix%%testProjectName%/bin/Release/%testProjectName%.dll --teamcity" />
+          <param name="teamcity.step.mode" value="default" />
+        </parameters>
+      </runner>
+      <runner id="RUNNER_16" name="" type="jb.nuget.pack">
+        <parameters>
+          <param name="nuget.pack.as.artifact" value="true" />
+          <param name="nuget.pack.commandline" value="-MsbuildPath /usr/lib/mono/msbuild/15.0/bin/" />
+          <param name="nuget.pack.output.clean" value="true" />
+          <param name="nuget.pack.output.directory" value="output/" />
+          <param name="nuget.pack.project.dir" value="as_is" />
+          <param name="nuget.pack.properties" value="Configuration=Release" />
+          <param name="nuget.pack.specFile" value="%pathPrefix%%primaryProjectName%/%primaryProjectName%.csproj" />
+          <param name="nuget.path" value="%teamcity.tool.NuGet.CommandLine.DEFAULT%" />
+          <param name="teamcity.step.mode" value="default" />
+        </parameters>
+      </runner>
+    </build-runners>
     <vcs-settings>
       <vcs-entry-ref root-id="Irc_StwalkersterBotMediaWikiLib_MediaWikiLib" />
     </vcs-settings>
     <requirements />
-    <build-triggers />
+    <build-triggers>
+      <build-trigger id="vcsTrigger" type="vcsTrigger">
+        <parameters>
+          <param name="groupCheckinsByCommitter" value="true" />
+          <param name="perCheckinTriggering" value="true" />
+          <param name="quietPeriodMode" value="DO_NOT_USE" />
+        </parameters>
+      </build-trigger>
+    </build-triggers>
+    <build-extensions>
+      <extension id="JetBrains.AssemblyInfo" type="JetBrains.AssemblyInfo">
+        <parameters>
+          <param name="assembly-format" value="%version%.0.0" />
+          <param name="file-format" value="%version%.%build.counter%" />
+          <param name="info-format" value="%version%.%build.counter%%versiontag%" />
+          <param name="patch-global-assembly-info" value="true" />
+        </parameters>
+      </extension>
+    </build-extensions>
     <cleanup />
   </settings>
 </build-type>
