@@ -4,7 +4,6 @@
   <description>MediaWiki Library</description>
   <settings ref="DotNetCoreLibrary">
     <parameters>
-      <param name="docker.dotnet.sdk" value="" />
       <param name="extraParameters" value="" />
       <param name="nunitRunner" value="3.11.1" />
       <param name="primaryProjectName" value="Stwalkerster.Bot.MediaWikiLib" />
