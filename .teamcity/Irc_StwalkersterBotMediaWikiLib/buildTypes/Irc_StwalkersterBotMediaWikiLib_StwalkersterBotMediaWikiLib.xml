@@ -13,13 +13,6 @@
       <param name="versiontag" value="-beta" spec="text description='e.g. &quot;-alpha&quot;' validationMode='any' display='normal'" />
     </parameters>
     <build-runners>
-      <runner id="RUNNER_3" name="xbuild" type="simpleRunner">
-        <parameters>
-          <param name="command.executable" value="/usr/bin/msbuild" />
-          <param name="command.parameters" value="%pathPrefix%%solutionName%.sln /p:Configuration=Release %extraParameters%" />
-          <param name="teamcity.step.mode" value="default" />
-        </parameters>
-      </runner>
       <runner id="RUNNER_15" name="Run Tests" type="simpleRunner">
         <parameters>
           <param name="command.executable" value="mono" />
