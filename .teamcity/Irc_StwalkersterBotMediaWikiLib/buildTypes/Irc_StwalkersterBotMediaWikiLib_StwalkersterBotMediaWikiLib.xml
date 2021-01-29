@@ -2,20 +2,15 @@
 <build-type xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" uuid="afe48d57-f7cb-406a-8549-de14162f74d4" paused="true" xsi:noNamespaceSchemaLocation="https://www.jetbrains.com/teamcity/schemas/2020.1/project-config.xsd">
   <name>Stwalkerster.Bot.MediaWikiLib</name>
   <description>MediaWiki Library</description>
-  <settings>
-    <options>
-      <option name="buildNumberPattern" value="%version%.%build.counter%%versiontag%" />
-    </options>
+  <settings ref="DotNetCoreLibrary">
     <parameters>
+      <param name="docker.dotnet.sdk" value="" />
       <param name="extraParameters" value="" />
       <param name="nunitRunner" value="3.11.1" />
-      <param name="pathPrefix" value="" />
       <param name="primaryProjectName" value="Stwalkerster.Bot.MediaWikiLib" />
       <param name="solutionName" value="MediaWikiLib" />
-      <param name="system.Configuration" value="Release" />
-      <param name="testProjectName" value="%primaryProjectName%.Tests" />
-      <param name="version" value="3.2" />
-      <param name="versiontag" value="" />
+      <param name="version" value="4.0" spec="text display='normal' description='Two or three-part version number. The build counter will be appended to the end.' validationMode='any'" />
+      <param name="versiontag" value="-beta" spec="text description='e.g. &quot;-alpha&quot;' validationMode='any' display='normal'" />
     </parameters>
     <build-runners>
       <runner id="RUNNER_14" name="" type="jb.nuget.installer">
@@ -60,15 +55,7 @@
       <vcs-entry-ref root-id="Irc_StwalkersterBotMediaWikiLib_MediaWikiLib" />
     </vcs-settings>
     <requirements />
-    <build-triggers>
-      <build-trigger id="vcsTrigger" type="vcsTrigger">
-        <parameters>
-          <param name="groupCheckinsByCommitter" value="true" />
-          <param name="perCheckinTriggering" value="true" />
-          <param name="quietPeriodMode" value="DO_NOT_USE" />
-        </parameters>
-      </build-trigger>
-    </build-triggers>
+    <build-triggers />
     <build-extensions>
       <extension id="JetBrains.AssemblyInfo" type="JetBrains.AssemblyInfo">
         <parameters>
