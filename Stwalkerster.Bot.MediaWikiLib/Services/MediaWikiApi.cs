@@ -817,6 +817,11 @@
 
         public string ShortenUrl(string url)
         {
+            return this.ShortenUrlWithAlt(url).Item1;
+        }
+
+        public Tuple<string,string> ShortenUrlWithAlt(string url)
+        {
             this.logger.InfoFormat("Getting shorturl for {0} from webservice", url);
 
             var queryParameters = new NameValueCollection
@@ -835,6 +840,7 @@
             var nav = new XPathDocument(apiResult).CreateNavigator();
 
             var shortUrlAttribute = nav.SelectSingleNode("//shortenurl/@shorturl");
+            var shortUrlAltAttribute = nav.SelectSingleNode("//shortenurl/@shorturlalt");
 
             if (shortUrlAttribute == null)
             {
@@ -842,8 +848,7 @@
                 throw new GeneralMediaWikiApiException("Unable to shorten URL", apiData);
             }
 
-            return shortUrlAttribute.Value;
-
+            return new Tuple<string, string>(shortUrlAttribute.Value, shortUrlAltAttribute?.Value);
         }
     }
 }

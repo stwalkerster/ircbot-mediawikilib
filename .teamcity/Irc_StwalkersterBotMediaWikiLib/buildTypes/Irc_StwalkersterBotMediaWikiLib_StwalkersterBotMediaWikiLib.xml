@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<build-type xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" uuid="afe48d57-f7cb-406a-8549-de14162f74d4" xsi:noNamespaceSchemaLocation="https://www.jetbrains.com/teamcity/schemas/2020.1/project-config.xsd">
+<build-type xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" uuid="afe48d57-f7cb-406a-8549-de14162f74d4" paused="true" xsi:noNamespaceSchemaLocation="https://www.jetbrains.com/teamcity/schemas/2020.1/project-config.xsd">
   <name>Stwalkerster.Bot.MediaWikiLib</name>
   <description>MediaWiki Library</description>
   <settings ref="DotNetCoreLibrary">
     <parameters>
       <param name="primaryProjectName" value="Stwalkerster.Bot.MediaWikiLib" />
       <param name="solutionName" value="MediaWikiLib" />
-      <param name="version" value="4.0" spec="text display='normal' description='Two or three-part version number. The build counter will be appended to the end.' validationMode='any'" />
+      <param name="version" value="4.1" spec="text display='normal' description='Two or three-part version number. The build counter will be appended to the end.' validationMode='any'" />
       <param name="versiontag" value="" spec="text description='e.g. &quot;-alpha&quot;' validationMode='any' display='normal'" />
     </parameters>
     <build-runners />
