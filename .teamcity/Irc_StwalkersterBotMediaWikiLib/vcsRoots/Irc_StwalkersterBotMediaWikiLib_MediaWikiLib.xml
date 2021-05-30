@@ -8,8 +8,8 @@
   <param name="ignoreKnownHosts" value="true" />
   <param name="submoduleCheckout" value="CHECKOUT" />
   <param name="teamcitySshKey" value="TeamCity key" />
-  <param name="url" value="ssh://git@phabricator.stwalkerster.co.uk/diffusion/IBMW/stwalkerster-bot-mediawikilib.git" />
-  <param name="useAlternates" value="true" />
+  <param name="url" value="git@github.com:stwalkerster/ircbot-mediawikilib.git" />
+  <param name="useAlternates" value="USE_MIRRORS" />
   <param name="userForTags" value="TeamCity &lt;teamcity@stwalkerster.co.uk&gt;" />
   <param name="usernameStyle" value="FULL" />
 </vcs-root>
