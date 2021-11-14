@@ -246,6 +246,26 @@
 
             Assert.Throws<GeneralMediaWikiApiException>(() => this.mwApi.ShortenUrl("foo"));
         }
+
+        [Test]
+        public void ShouldParseInterwikis()
+        {
+            var return1 = "<?xml version=\"1.0\"?><api batchcomplete=\"\"><query><interwikimap>    <iw prefix=\"wikimania\" local=\"\" url=\"https://wikimania.wikimedia.org/wiki/$1\" />    <iw prefix=\"wikispore\" url=\"https://wikispore.wmflabs.org/wiki/$1\" />    <iw prefix=\"wmf\" local=\"\" url=\"https://foundation.wikimedia.org/wiki/$1\" />    <iw prefix=\"cache\" url=\"https://www.google.com/search?q=cache:$1\" protorel=\"\"/>    <iw prefix=\"fr\" local=\"\" language=\"français\" url=\"https://fr.wikipedia.org/wiki/$1\"/></interwikimap></query></api>";
+            var stream1 = new MemoryStream();
+            var sw = new StreamWriter(stream1);
+            sw.Write(return1);
+            sw.Flush();
+            stream1.Position = 0;
+            
+            this.wsClient
+                .Setup(x => x.DoApiCall(It.IsAny<NameValueCollection>(), It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(stream1);
+            
+            var interwikis = this.mwApi.GetInterwikiPrefixes().ToList();
+
+            Assert.That(interwikis.Count, Is.EqualTo(5));
+
+        }
         
         public static IEnumerable<TestCaseData> GroupParseTestCases
         {

@@ -28,5 +28,6 @@
         IDictionary<string, string> GetPagesInCategory(string category, string limit, bool fetchAll);
         string ShortenUrl(string url);
         Tuple<string,string> ShortenUrlWithAlt(string url);
+        IEnumerable<InterwikiPrefix> GetInterwikiPrefixes();
     }
 }

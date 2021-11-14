@@ -850,5 +850,69 @@
 
             return new Tuple<string, string>(shortUrlAttribute.Value, shortUrlAltAttribute?.Value);
         }
+
+        public IEnumerable<InterwikiPrefix> GetInterwikiPrefixes()
+        {
+            this.logger.InfoFormat("Getting interwiki map from webservice");
+
+            var queryParameters = new NameValueCollection
+            {
+                {"action", "query"},
+                {"meta", "siteinfo"},
+                {"siprop", "interwikimap"}
+            };
+
+            var interwikis = new List<InterwikiPrefix>();
+            
+            while (true)
+            {
+                var apiResult = this.wsClient.DoApiCall(
+                    queryParameters,
+                    this.config.MediaWikiApiEndpoint,
+                    this.config.UserAgent);
+
+                var nav = new XPathDocument(apiResult).CreateNavigator();
+
+                foreach (var node in nav.Select("//query/interwikimap/iw"))
+                {
+                    var xpn = node as XPathNavigator;
+
+                    if (xpn == null)
+                    {
+                        this.logger.Warn("Null navigator while parsing iw data?!");
+                        continue;
+                    }
+
+                    var iw = new InterwikiPrefix();
+
+                    iw.Prefix = xpn.SelectSingleNode("@prefix")?.Value;
+                    iw.Language = xpn.SelectSingleNode("@language")?.Value;
+                    iw.Url = xpn.SelectSingleNode("@url")?.Value;
+
+                    iw.Local = xpn.SelectSingleNode("@local") != null;
+                    iw.ProtocolRelative = xpn.SelectSingleNode("@protorel") != null;
+
+                    interwikis.Add(iw);
+                }
+
+                var xPathNodeIterator = nav.Select("//continue");
+                if (xPathNodeIterator.Count == 0)
+                {
+                    // no continuation
+                    break;
+                }
+
+                xPathNodeIterator.MoveNext();
+                var attrNav = xPathNodeIterator.Current.Clone();
+
+                var attr = attrNav.Select("@*");
+                while(attr.MoveNext())
+                {
+                    queryParameters.Set(attr.Current.Name, attr.Current.Value);
+                }
+            }
+
+            return interwikis;
+        }
     }
 }
