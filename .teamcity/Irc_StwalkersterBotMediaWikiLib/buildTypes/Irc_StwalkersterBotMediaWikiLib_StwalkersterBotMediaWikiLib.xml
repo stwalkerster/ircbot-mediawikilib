@@ -22,7 +22,7 @@
           <param name="github_host" value="https://api.github.com" />
           <param name="github_oauth_user" value="stwalkerster" />
           <param name="publisherId" value="githubStatusPublisher" />
-          <param name="secure:github_access_token" value="41444a6d-3458-43e1-b019-f736e1b4bf6f" />
+          <param name="secure:github_access_token" value="credentialsJSON:7cfaf42f-9506-4507-a647-21f95820acce" />
           <param name="vcsRootId" value="Irc_StwalkersterBotMediaWikiLib_MediaWikiLib" />
         </parameters>
       </extension>
