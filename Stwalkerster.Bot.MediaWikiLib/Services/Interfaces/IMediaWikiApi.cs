@@ -29,5 +29,6 @@
         string ShortenUrl(string url);
         Tuple<string,string> ShortenUrlWithAlt(string url);
         IEnumerable<InterwikiPrefix> GetInterwikiPrefixes();
+        IEnumerable<string> PrefixSearch(string prefix, int pageNamespace);
     }
 }

@@ -484,6 +484,11 @@
 
         public IEnumerable<string> PrefixSearch(string prefix)
         {
+            return this.PrefixSearch(prefix, 0);
+        }
+        
+        public IEnumerable<string> PrefixSearch(string prefix, int pageNamespace)
+        {
             bool continuePresent;
 
             var queryParameters = new NameValueCollection
@@ -491,6 +496,7 @@
                 {"action", "query"},
                 {"list", "allpages"},
                 {"apprefix", prefix},
+                {"apnamespace", pageNamespace.ToString(CultureInfo.InvariantCulture)},
                 {"aplimit", "max"}
             };
 
