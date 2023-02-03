@@ -36,12 +36,12 @@
                 url = string.Format("{0}?{1}", endpoint, queryFragment);
             }
             
-            this.logger.DebugFormat("Requesting {0}", url);
-            
             var hwr = (HttpWebRequest)WebRequest.Create(url);
             hwr.CookieContainer = cookieJar;
             hwr.UserAgent = userAgent;
             hwr.Method = post ? "POST" : "GET";
+            
+            this.logger.DebugFormat("Requesting {1} {0}", url, hwr.Method);
 
             if (post)
             {

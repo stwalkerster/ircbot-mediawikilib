@@ -35,6 +35,8 @@
 
         private string GetToken(string type = "csrf")
         {
+            this.logger.InfoFormat("Getting {0} token", type);
+
             var queryParameters = new NameValueCollection
             {
                 {"action", "query"},
@@ -62,6 +64,7 @@
         }
         private bool IsLoggedIn()
         {
+            this.logger.DebugFormat("Checking login status");
             var queryParameters = new NameValueCollection
             {
                 {"action", "query"},
@@ -87,12 +90,16 @@
 
         public void Login()
         {
+            this.logger.InfoFormat("Logging in");
+
             if (this.IsLoggedIn())
             {
                 return;
             }
 
             var token = this.GetToken("login");
+
+            this.logger.InfoFormat("Doing login");
 
             var queryParameters = new NameValueCollection
             {
@@ -231,6 +238,8 @@
 
         public int GetCategorySize(string categoryName)
         {
+            this.logger.InfoFormat("Getting size of category {0}", categoryName);
+
             var queryParameters = new NameValueCollection
             {
                 {"action", "query"},
@@ -280,6 +289,8 @@
 
         public IDictionary<string, string> GetPagesInCategory(string category, string limit, bool fetchAll)
         {
+            this.logger.InfoFormat("Getting pages in category {0}", category);
+
             var pages = new Dictionary<string, string>();
             bool continuePresent;
             
