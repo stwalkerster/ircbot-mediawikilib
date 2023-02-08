@@ -1,9 +1,9 @@
 namespace Stwalkerster.Bot.MediaWikiLib.Exceptions
 {
-    public class MissingUserException : GeneralMediaWikiApiException
+    using System;
+
+    [Obsolete]
+    public class MissingUserException : MissingObjectException
     {
-        public MissingUserException() : base("Missing user")
-        {
-        }
     }
 }

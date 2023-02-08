@@ -259,7 +259,7 @@
             var missing = nav.SelectSingleNode("//page/@missing");
             if (missing != null)
             {
-                throw new GeneralMediaWikiApiException("Category not found");
+                throw new MissingObjectException();
             }
 
             var pages = nav.SelectSingleNode("//page/categoryinfo/@pages");
@@ -421,7 +421,7 @@
             var missingAttribute = nav.SelectSingleNode("//users/user/@missing");
             if (missingAttribute != null)
             {
-                throw new MissingUserException();
+                throw new MissingObjectException();
             }
 
             var regAttribute = nav.SelectSingleNode("//users/user/@registration");
@@ -455,7 +455,7 @@
             var missingAttribute = nav.SelectSingleNode("//users/user/@missing");
             if (missingAttribute != null)
             {
-                throw new MissingUserException();
+                throw new MissingObjectException();
             }
 
             var editCountAttribute = nav.SelectSingleNode("//users/user/@editcount");
@@ -587,7 +587,7 @@
 
             if (nav.SelectSingleNode("//user/@missing") != null)
             {
-                throw new MissingUserException();
+                throw new MissingObjectException();
             }
 
             var groups = new List<string>();

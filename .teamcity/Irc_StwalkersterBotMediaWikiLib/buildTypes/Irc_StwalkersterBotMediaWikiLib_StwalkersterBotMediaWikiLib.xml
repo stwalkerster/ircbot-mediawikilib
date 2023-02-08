@@ -6,7 +6,7 @@
     <parameters>
       <param name="primaryProjectName" value="Stwalkerster.Bot.MediaWikiLib" />
       <param name="solutionName" value="MediaWikiLib" />
-      <param name="version" value="4.2" spec="text display='normal' description='Two or three-part version number. The build counter will be appended to the end.' validationMode='any'" />
+      <param name="version" value="5.0" spec="text display='normal' description='Two or three-part version number. The build counter will be appended to the end.' validationMode='any'" />
       <param name="versiontag" value="" spec="text description='e.g. &quot;-alpha&quot;' validationMode='any' display='normal'" />
     </parameters>
     <build-runners />
