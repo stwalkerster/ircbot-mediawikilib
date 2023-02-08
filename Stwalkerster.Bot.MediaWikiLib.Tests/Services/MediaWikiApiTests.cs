@@ -57,7 +57,7 @@
                 .Setup(x => x.DoApiCall(It.IsAny<NameValueCollection>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(memStream);
 
-            Assert.Throws<MissingUserException>(() => this.mwApi.GetUserGroups("Stwnonexist"));
+            Assert.Throws<MissingObjectException>(() => this.mwApi.GetUserGroups("Stwnonexist"));
         }
 
         [Test, TestCaseSource(typeof(MediaWikiApiTests), "CategoryParseTestCases")]
