@@ -8,8 +8,9 @@
         <Authors>Simon Walker</Authors>
         <Description>A MediaWiki API library</Description>
         <Copyright>Copyright © Simon Walker 2021</Copyright>
-        <PackageProjectUrl>https://stwalkerster.co.uk/ircclient/</PackageProjectUrl>
+        <PackageProjectUrl>https://github.com/stwalkerster/ircbot-mediawikilib</PackageProjectUrl>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <RepositoryUrl>https://github.com/stwalkerster/ircbot-mediawikilib</RepositoryUrl>
     </PropertyGroup>
     <ItemGroup>
       <PackageReference Include="Castle.Core" Version="4.4.1" />
