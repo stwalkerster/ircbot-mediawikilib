@@ -6,7 +6,7 @@
     using System.IO;
     using System.Linq;
     using System.Net;
-    using Moq;
+    using NSubstitute;
     using NUnit.Framework;
     using Stwalkerster.Bot.MediaWikiLib.Exceptions;
     using Stwalkerster.Bot.MediaWikiLib.Model;
@@ -16,29 +16,28 @@
     [TestFixture]
     public class MediaWikiApiTests : TestBase
     {
-        private Mock<IWebServiceClient> wsClient;
+        private IWebServiceClient wsClient;
         private MediaWikiApi mwApi;
 
         [SetUp]
         public void LocalSetup()
         {
-            this.wsClient = new Mock<IWebServiceClient>();
-            this.mwApi = new MediaWikiApi(this.LoggerMock.Object, this.wsClient.Object, this.AppConfigMock.Object);
+            this.wsClient = Substitute.For<IWebServiceClient>();
+            this.mwApi = new MediaWikiApi(this.LoggerMock, this.wsClient, this.AppConfigMock);
         }
 
         [Test, TestCaseSource(typeof(MediaWikiApiTests), "GroupParseTestCases")]
         public List<string> ShouldParseGroupsCorrectly(string user, string input)
         {
             // arrange
-            var memstream = new MemoryStream();
-            var sw = new StreamWriter(memstream);
+            var memStream = new MemoryStream();
+            var sw = new StreamWriter(memStream);
             sw.Write(input);
             sw.Flush();
-            memstream.Position = 0;
+            memStream.Position = 0;
 
-            this.wsClient
-                .Setup(x => x.DoApiCall(It.IsAny<NameValueCollection>(), It.IsAny<string>(), It.IsAny<string>()))
-                .Returns(memstream);
+            this.wsClient.DoApiCall(Arg.Any<NameValueCollection>(), Arg.Any<string>(), Arg.Any<string>())
+                .Returns(memStream);
 
             // act
             return this.mwApi.GetUserGroups(user).ToList();
@@ -53,10 +52,9 @@
             sw.Flush();
             memStream.Position = 0;
 
-            this.wsClient
-                .Setup(x => x.DoApiCall(It.IsAny<NameValueCollection>(), It.IsAny<string>(), It.IsAny<string>()))
+            this.wsClient.DoApiCall(Arg.Any<NameValueCollection>(), Arg.Any<string>(), Arg.Any<string>())
                 .Returns(memStream);
-
+            
             Assert.Throws<MissingObjectException>(() => this.mwApi.GetUserGroups("Stwnonexist"));
         }
 
@@ -64,15 +62,14 @@
         public bool ShouldParseCategoriesCorrectly(string input)
         {
             // arrange
-            var memstream = new MemoryStream();
-            var sw = new StreamWriter(memstream);
+            var memStream = new MemoryStream();
+            var sw = new StreamWriter(memStream);
             sw.Write(input);
             sw.Flush();
-            memstream.Position = 0;
+            memStream.Position = 0;
 
-            this.wsClient
-                .Setup(x => x.DoApiCall(It.IsAny<NameValueCollection>(), It.IsAny<string>(), It.IsAny<string>()))
-                .Returns(memstream);
+            this.wsClient.DoApiCall(Arg.Any<NameValueCollection>(), Arg.Any<string>(), Arg.Any<string>())
+                .Returns(memStream);
 
             // act
             return this.mwApi.PageIsInCategory(string.Empty, string.Empty);
@@ -88,8 +85,7 @@
             sw.Flush();
             memoryStream.Position = 0;
 
-            this.wsClient
-                .Setup(x => x.DoApiCall(It.IsAny<NameValueCollection>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CookieContainer>(), It.IsAny<bool>()))
+            this.wsClient.DoApiCall(Arg.Any<NameValueCollection>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CookieContainer>(), Arg.Any<bool>())
                 .Returns(memoryStream);
 
             // act
@@ -116,10 +112,8 @@
             sw2.Flush();
             stream2.Position = 0;
 
-            this.wsClient
-                .SetupSequence(x => x.DoApiCall(It.IsAny<NameValueCollection>(), It.IsAny<string>(), It.IsAny<string>()))
-                .Returns(stream1)
-                .Returns(stream2);
+            this.wsClient.DoApiCall(Arg.Any<NameValueCollection>(), Arg.Any<string>(), Arg.Any<string>())
+                .Returns(stream1, stream2);
 
             // act
             var categoriesOfPage = this.mwApi.GetCategoriesOfPage(title).ToList();
@@ -141,8 +135,7 @@
             sw.Flush();
             stream1.Position = 0;
 
-            this.wsClient
-                .Setup(x => x.DoApiCall(It.IsAny<NameValueCollection>(), It.IsAny<string>(), It.IsAny<string>()))
+            this.wsClient.DoApiCall(Arg.Any<NameValueCollection>(), Arg.Any<string>(), Arg.Any<string>())
                 .Returns(stream1);
 
             var blocks = this.mwApi.GetBlockInformation("foo").ToList();
@@ -174,8 +167,7 @@
             sw.Flush();
             stream1.Position = 0;
 
-            this.wsClient
-                .Setup(x => x.DoApiCall(It.IsAny<NameValueCollection>(), It.IsAny<string>(), It.IsAny<string>()))
+            this.wsClient.DoApiCall(Arg.Any<NameValueCollection>(), Arg.Any<string>(), Arg.Any<string>())
                 .Returns(stream1);
 
             var blocks = this.mwApi.GetBlockInformation("foo").ToList();
@@ -220,8 +212,7 @@
             sw.Flush();
             stream1.Position = 0;
 
-            this.wsClient
-                .Setup(x => x.DoApiCall(It.IsAny<NameValueCollection>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CookieContainer>(), It.IsAny<bool>()))
+            this.wsClient.DoApiCall(Arg.Any<NameValueCollection>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CookieContainer>(), Arg.Any<bool>())
                 .Returns(stream1);
 
             var shorturl = this.mwApi.ShortenUrl("foo");
@@ -240,8 +231,7 @@
             sw.Flush();
             stream1.Position = 0;
 
-            this.wsClient
-                .Setup(x => x.DoApiCall(It.IsAny<NameValueCollection>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CookieContainer>(), It.IsAny<bool>()))
+            this.wsClient.DoApiCall(Arg.Any<NameValueCollection>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CookieContainer>(), Arg.Any<bool>())
                 .Returns(stream1);
 
             Assert.Throws<GeneralMediaWikiApiException>(() => this.mwApi.ShortenUrl("foo"));
@@ -257,8 +247,7 @@
             sw.Flush();
             stream1.Position = 0;
             
-            this.wsClient
-                .Setup(x => x.DoApiCall(It.IsAny<NameValueCollection>(), It.IsAny<string>(), It.IsAny<string>()))
+            this.wsClient.DoApiCall(Arg.Any<NameValueCollection>(), Arg.Any<string>(), Arg.Any<string>())
                 .Returns(stream1);
             
             var interwikis = this.mwApi.GetInterwikiPrefixes().ToList();
