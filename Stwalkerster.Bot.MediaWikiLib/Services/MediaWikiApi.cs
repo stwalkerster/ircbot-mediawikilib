@@ -23,6 +23,8 @@
         private readonly Dictionary<string, List<string>> rightsCache;
         private readonly CookieContainer cookieJar;
 
+        private string lockoutLogin = null;
+        
         public MediaWikiApi(ILogger logger, IWebServiceClient wsClient, IMediaWikiConfiguration mediaWikiConfiguration)
         {
             this.logger = logger;
@@ -97,6 +99,11 @@
                 return;
             }
 
+            if (!string.IsNullOrEmpty(this.lockoutLogin))
+            {
+                throw new GeneralMediaWikiApiException("Login attempt prevented due to previous failure. " + this.lockoutLogin);
+            }
+
             var token = this.GetToken("login");
 
             this.logger.InfoFormat("Doing login");
@@ -129,6 +136,9 @@
             if (loginResult.Value != "Success")
             {
                 this.logger.Debug(nav.OuterXml);
+                var loginReason = nav.SelectSingleNode("//login/@reason");
+                this.lockoutLogin = loginReason.Value;
+                
                 throw new GeneralMediaWikiApiException("Error logging in, service returned " + loginResult.Value);
             }
         }
